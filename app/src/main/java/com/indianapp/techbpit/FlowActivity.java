@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.indianapp.techbpit.databinding.ActivityFlowBinding;
+import com.squareup.picasso.Picasso;
 
 public class FlowActivity extends AppCompatActivity {
     private ActivityFlowBinding binding;
@@ -17,6 +18,7 @@ public class FlowActivity extends AppCompatActivity {
         binding = ActivityFlowBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setOnClickListener();
+//        Picasso.get().load("https://res.cloudinary.com/dmigta0dz/image/upload/v1667237229/bp7xhe2jyte8srslr60y.jpg").into(binding.imageView2);
     }
 
     private void setOnClickListener() {
