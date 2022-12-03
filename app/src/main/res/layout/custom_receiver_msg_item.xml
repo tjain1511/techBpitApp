@@ -59,7 +59,7 @@
             android:textColor="@color/black"
             android:textFontWeight="580"
             android:textSize="17sp"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textMultiLine"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/time"
             app:layout_constraintStart_toStartOf="parent"

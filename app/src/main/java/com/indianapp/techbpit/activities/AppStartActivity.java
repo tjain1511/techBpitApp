@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +23,7 @@ public class AppStartActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(sharedPreferences.getString("my_email", ""))) {
             binding.wholeLayout.setVisibility(View.VISIBLE);
         } else {
-            Intent intent = new Intent(this, AllUsersActivity.class);
+            Intent intent = new Intent(this, AllJoinedGroupsActivity.class);
             startActivity(intent);
             finish();
         }

@@ -1,13 +1,17 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.indianapp.techbpit.BaseData;
+import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.activities.AppStartActivity;
+import com.indianapp.techbpit.activities.OTPVerificationActivity;
 import com.indianapp.techbpit.databinding.ActivitySignUpBinding;
+import com.indianapp.techbpit.model.SignUpRequestModel;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -42,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
     }
 
     @Override
-    public void onResponseReceived(RESTController.RESTCommands commands, Call<?> request, Response<?> response) {
+    public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         switch (commands) {
             case REQ_POST_LOG_IN_REQ:
                 break;
@@ -62,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
     }
 
     @Override
-    public void onResponseFailed(RESTController.RESTCommands commands, Call<?> request, Throwable t) {
+    public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
             case REQ_POST_LOG_IN_REQ:
             case REQ_POST_SIGN_UP_REQ:

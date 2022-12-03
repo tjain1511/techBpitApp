@@ -1,13 +1,14 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,13 +27,26 @@ import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.google.gson.Gson;
+import com.indianapp.techbpit.BaseData;
+import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.SocketClient;
+import com.indianapp.techbpit.adapters.MessageAdapter;
 import com.indianapp.techbpit.databinding.ActivityMainBinding;
+import com.indianapp.techbpit.model.GroupMessageRequest;
+import com.indianapp.techbpit.model.MessageModel;
+import com.indianapp.techbpit.model.MessageRequest;
+import com.indianapp.techbpit.model.UserModel;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,64 +57,81 @@ import java.util.Map;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import retrofit2.Call;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener{
+public class MainActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
     private Socket socket;
     private ArrayList<MessageModel> messages = new ArrayList<>();
     private ActivityMainBinding binding;
     private MessageAdapter adapter;
     private UserModel currentUser;
-    private SharedPreferences mPrefs;
-    Map config = new HashMap();
+    private Map config = new HashMap();
+    private String myEmail;
+    private String groupId;
 
 
     private static final int PERMISSION_CODE = 1;
     private static final int ATTACHMENT_CHOICE_TAKE_PHOTO = 0x1002;
     private static final int REQUEST_FILE_DOCUMENT = 0x001;
     private Uri filePath;
+    private boolean isGrpChat;
 
     @Override
     protected void onResume() {
         super.onResume();
-        SocketClient.setUserId(mPrefs.getString("my_email", ""));
+        SocketClient.setUserId(SharedPrefHelper.getUserModel(this)._id);
         socket = SocketClient.getSocket(this);
+        socket.emit("join-room", groupId);
+        configCloudinary();
+        setOnClickListener();
+        initRecyclerView();
+        if (!isGrpChat) {
+            MessageRequest messageRequest = new MessageRequest();
+            messageRequest.sender = SharedPrefHelper.getUserModel(this)._id;
+            messageRequest.receiver = currentUser._id;
+            try {
+                RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_GET_MESSAGES, new BaseData<>(messageRequest), this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            GroupMessageRequest groupMessageRequest = new GroupMessageRequest();
+            groupMessageRequest.groupId = groupId;
+            try {
+                RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_GET_GROUP_MESSAGES, new BaseData<>(groupMessageRequest), this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        mPrefs = this.getSharedPreferences("com.indianapp.techbpit", MODE_PRIVATE);
+        myEmail = SharedPrefHelper.getUserModel(this).email;
         getWindow().setStatusBarColor(Color.parseColor("#4169ef"));
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
-        currentUser = (UserModel) getIntent().getBundleExtra("bundle").getSerializable("current_user");
-        binding.txt.setText(currentUser.username);
-        Picasso.get().load(currentUser.imageUrl).into(binding.imgC);
-        SocketClient.setUserId(mPrefs.getString("my_email", ""));
-        socket = SocketClient.getSocket(this);
-        Log.i("current_user", currentUser.email);
-
-        socket.on("disconnect", onDisconnect);
-        configCloudinary();
-        setOnClickListener();
-        initRecyclerView();
-        MessageRequest messageRequest = new MessageRequest();
-        messageRequest.senderId = mPrefs.getString("my_email", "");
-        messageRequest.receiverId = currentUser.email;
-        try {
-            RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_GET_MESSAGES, new BaseData<>(messageRequest), this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        isGrpChat = getIntent().getBooleanExtra("is_grp_chat", false);
+        if (!isGrpChat) {
+            currentUser = (UserModel) getIntent().getBundleExtra("bundle").getSerializable("current_user");
+            binding.txt.setText(currentUser.username);
+            Picasso.get().load(currentUser.imageUrl).into(binding.imgC);
+        } else {
+            binding.txt.setText(getIntent().getStringExtra("group_name"));
+            Picasso.get().load(getIntent().getStringExtra("group_image")).into(binding.imgC);
+            groupId = getIntent().getStringExtra("group_id");
         }
     }
 
     private void setOnClickListener() {
         binding.imageView6.setOnClickListener(v -> {
             try {
-                attemptSend();
+                if (!isGrpChat)
+                    attemptSend(getMessageFromTextBox(), "direct-message", "");
+                else
+                    attemptGrpSend(getMessageFromTextBox(), "group-message", "");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -118,23 +150,24 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
         });
     }
 
-    private void attemptSend() throws JSONException {
-        String userId = currentUser.email;
+    private String getMessageFromTextBox() {
         String message = binding.msg.getText().toString().trim();
         if (TextUtils.isEmpty(message)) {
             Toast.makeText(this, "message can't be empty", Toast.LENGTH_SHORT).show();
-            return;
+            return null;
         }
-        if (TextUtils.isEmpty(userId)) {
-            Toast.makeText(this, "receiverId can't be empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        return message;
+    }
+
+    private void attemptSend(String message, String type, String imageUrl) throws JSONException {
+//"direct-message","group-message","direct-message-with-image","group-message-with-image","session-post"
         MessageModel messageModel = new MessageModel();
         messageModel.message = message;
-        messageModel.sender = mPrefs.getString("my_email", "");
-        messageModel.receiver = userId;
+        messageModel.sender = SharedPrefHelper.getUserModel(this)._id;
+        messageModel.receiver = currentUser._id;
         messageModel.timestamp = String.valueOf(System.currentTimeMillis());
         messageModel.isSent = false;
+        messageModel.imageUrl = imageUrl;
         messages.add(messageModel);
         adapter.notifyItemChanged(messages.size() - 1);
         binding.rvChat.smoothScrollToPosition(adapter.getItemCount());
@@ -142,11 +175,13 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
         Log.i("sender", messageModel.sender);
         Log.i("receiver", messageModel.receiver);
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", type);
         jsonObject.put("sender", messageModel.sender);
         jsonObject.put("message", messageModel.message);
         jsonObject.put("receiver", messageModel.receiver);
         jsonObject.put("timestamp", messageModel.timestamp);
-        socket.emit("msg", jsonObject, userId, new Ack() {
+        jsonObject.put("imageUrl", imageUrl);
+        socket.emit("msg", jsonObject, currentUser._id, new Ack() {
             @Override
             public void call(Object... args) {
                 JSONObject response = (JSONObject) args[0];
@@ -166,21 +201,80 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
         });
     }
 
+    private void attemptGrpSend(String message, String type, String imageUrl) throws JSONException {
+        MessageModel messageModel = new MessageModel();
+        messageModel.message = message;
+        messageModel.sender = SharedPrefHelper.getUserModel(this)._id;
+        messageModel.receiver = groupId;
+        messageModel.timestamp = String.valueOf(System.currentTimeMillis());
+        messageModel.isSent = false;
+        messageModel.imageUrl = imageUrl;
+        messages.add(messageModel);
+        adapter.notifyItemChanged(messages.size() - 1);
+        binding.rvChat.smoothScrollToPosition(adapter.getItemCount());
+        binding.msg.setText("");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", type);
+        jsonObject.put("sender", messageModel.sender);
+        jsonObject.put("message", messageModel.message);
+        jsonObject.put("receiver", messageModel.receiver);
+        jsonObject.put("timestamp", messageModel.timestamp);
+        jsonObject.put("imageUrl", imageUrl);
+        binding.msg.setText("");
+        socket.emit("grp-msg", jsonObject, groupId, new Ack() {
+            @Override
+            public void call(Object... args) {
+                JSONObject response = (JSONObject) args[0];
+                try {
+                    Log.i("emitted", response.getString("status"));
+                    messageModel.isSent = true;
+                    binding.rvChat.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
+//    private Emitter.Listener onNewGrpMessage = new Emitter.Listener() {
+//        @Override
+//        public void call(final Object... args) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    JSONObject jsonObject = (JSONObject) args[0];
+//                    Gson gson = new Gson();
+//                    MessageModel messageModel = gson.fromJson(String.valueOf(jsonObject), MessageModel.class);
+//
+//                    messages.add(messageModel);
+//                    adapter.notifyItemChanged(messages.size() - 1);
+//                    binding.rvChat.smoothScrollToPosition(adapter.getItemCount());
+//                }
+//            });
+//        }
+//    };
+
     private void initRecyclerView() {
-        adapter = new MessageAdapter(messages, mPrefs.getString("my_email", ""));
+        adapter = new MessageAdapter(this,messages, SharedPrefHelper.getUserModel(this)._id);
         binding.rvChat.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
         binding.rvChat.setLayoutManager(linearLayoutManager);
     }
 
-    private Emitter.Listener onDisconnect = new Emitter.Listener() {
-
-        @Override
-        public void call(Object... args) {
-            Log.i("messafge", "sdkfh");
-        }
-    };
+    //    private Emitter.Listener onDisconnect = new Emitter.Listener() {
+//
+//        @Override
+//        public void call(Object... args) {
+//            Log.i("messafge", "sdkfh");
+//        }
+//    };
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -259,13 +353,14 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
 //            Toast.makeText(this, "something went wrong", Toast.LENGTH_SHORT).show();
 //            return;
 //        }
-//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//        Intent intent = new Intent(Intent.ACTION_PICK);
 //        intent.setType("/");
 //        String[] mimeTypes = {"image/jpeg", "image/png", "application/pdf", "application/msword"};
 //        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 //        startActivityForResult(intent, REQUEST_FILE_DOCUMENT);
 //    }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -278,7 +373,9 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 binding.selectedImg.setImageBitmap(bitmap);
-            } catch (IOException e) {
+//                String file = SiliCompressor.with(this).compress(filePath.getPath(), new File(filePath.getPath()));
+//                filePath = Uri.parse(file);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -294,8 +391,28 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
     }
 
     private void uploadToCloudinary(Uri filePath) {
-        Log.d("A", "sign up uploadToCloudinary- ");
-        MediaManager.get().upload(filePath).callback(new UploadCallback() {
+        Log.d("filepath", String.valueOf(filePath));
+        InputStream imageStream = null;
+        try {
+            imageStream = getContentResolver().openInputStream(
+                    filePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        byte[] byteArray = stream.toByteArray();
+        try {
+            stream.close();
+            stream = null;
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        MediaManager.get().upload(byteArray).callback(new UploadCallback() {
             @Override
             public void onStart(String requestId) {
             }
@@ -310,34 +427,15 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
                 binding.progress.setVisibility(View.GONE);
                 binding.chatActivity.setVisibility(View.VISIBLE);
                 binding.imgUpload.setVisibility(View.GONE);
-                MessageModel messageModel = new MessageModel();
-                messageModel.message = resultData.get("url").toString();
-                messageModel.sender = mPrefs.getString("my_email", "viratkohli@gmail.com");
-                messageModel.receiver = currentUser.email;
-                messageModel.timestamp = String.valueOf(System.currentTimeMillis());
-                JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("sender", messageModel.sender);
-                    jsonObject.put("message", messageModel.message);
-                    jsonObject.put("receiver", messageModel.receiver);
-                    jsonObject.put("timestamp", messageModel.timestamp);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                socket.emit("msg", jsonObject, currentUser.email, new Ack() {
-                    @Override
-                    public void call(Object... args) {
-                        JSONObject response = (JSONObject) args[0];
-                        try {
-                            Log.i("emitted", response.getString("status"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    if (isGrpChat) {
+                        attemptGrpSend("", "group-message-with-image", resultData.get("url").toString());
+                    } else {
+                        attemptSend("", "direct-message-with-image", resultData.get("url").toString());
                     }
-                });
-                messages.add(messageModel);
-                adapter.notifyItemChanged(messages.size() - 1);
-                binding.rvChat.smoothScrollToPosition(adapter.getItemCount());
+                } catch (JSONException jsonException) {
+                    jsonException.printStackTrace();
+                }
             }
 
             @Override
@@ -362,18 +460,25 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
     }
 
     @Override
-    public void onResponseReceived(RESTController.RESTCommands commands, Call<?> request, Response<?> response) {
+    public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
 
         ArrayList<MessageModel> oldMessages = (ArrayList<MessageModel>) response.body();
-        Log.i("response",String.valueOf(messages.size()));
+        Log.i("response", String.valueOf(messages.size()));
+        messages.clear();
         messages.addAll(oldMessages);
         adapter.notifyDataSetChanged();
-        String event_Name = currentUser.email + "-msg";
-        socket.on(event_Name, onNewMessage);
+        if (!isGrpChat) {
+            String event_Name = currentUser._id + "-msg";
+            socket.off(event_Name);
+            socket.on(event_Name, onNewMessage);
+        } else {
+            socket.off(groupId + "-msg");
+            socket.on(groupId + "-msg", onNewMessage);
+        }
     }
 
     @Override
-    public void onResponseFailed(RESTController.RESTCommands commands, Call<?> request, Throwable t) {
+    public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
 
     }
 }

@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.model;
 
 public class SignUpRequestModel {
     public String email;

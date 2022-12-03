@@ -1,9 +1,11 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import com.indianapp.techbpit.R;
 
 public class StartActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;

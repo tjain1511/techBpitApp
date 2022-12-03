@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.indianapp.techbpit.SocketClient;
 import com.indianapp.techbpit.databinding.ActivityFlowBinding;
-import com.squareup.picasso.Picasso;
 
 public class FlowActivity extends AppCompatActivity {
     private ActivityFlowBinding binding;

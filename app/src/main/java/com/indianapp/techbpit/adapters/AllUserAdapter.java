@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.indianapp.techbpit.databinding.ItemAllUserBinding;
+import com.indianapp.techbpit.model.UserModel;
+import com.indianapp.techbpit.activities.MainActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

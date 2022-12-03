@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,9 +11,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -25,7 +27,18 @@ import android.widget.Toast;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.google.gson.Gson;
+import com.indianapp.techbpit.BaseData;
+import com.indianapp.techbpit.ImageUtils;
+import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.SocketClient;
+import com.indianapp.techbpit.adapters.MessageAdapter;
 import com.indianapp.techbpit.databinding.ActivityGroupBinding;
+import com.indianapp.techbpit.databinding.ActivityMainBinding;
+import com.indianapp.techbpit.model.MessageModel;
+import com.indianapp.techbpit.model.MessageRequest;
+import com.indianapp.techbpit.model.UserModel;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,9 +54,11 @@ import java.util.Map;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import retrofit2.Call;
+import retrofit2.Response;
 
-public class GroupActivity extends AppCompatActivity {
-//    private ActivityGroupBinding binding;
+public class GroupActivity extends AppCompatActivity  {
+//        private ActivityGroupBinding binding;
 //    private MessageAdapter adapter;
 //    private ArrayList<String> messages = new ArrayList<>();
 //    private Socket socket;
@@ -276,4 +291,5 @@ public class GroupActivity extends AppCompatActivity {
 //            }
 //        }).dispatch();
 //    }
+
 }

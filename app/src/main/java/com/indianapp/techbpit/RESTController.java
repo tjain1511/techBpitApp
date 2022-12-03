@@ -1,7 +1,15 @@
 package com.indianapp.techbpit;
 
 import android.content.Context;
-import android.icu.text.MessagePattern;
+
+import com.indianapp.techbpit.model.GroupMessageRequest;
+import com.indianapp.techbpit.model.GroupResponse;
+import com.indianapp.techbpit.model.JoinGroupRequest;
+import com.indianapp.techbpit.model.MessageModel;
+import com.indianapp.techbpit.model.MessageRequest;
+import com.indianapp.techbpit.model.OTPVerifyRequest;
+import com.indianapp.techbpit.model.SignUpRequestModel;
+import com.indianapp.techbpit.model.UserModel;
 
 import java.util.List;
 
@@ -19,13 +27,17 @@ public class RESTController {
         REQ_POST_LOG_IN_REQ,
         REQ_POST_OTP_VERIFY,
         REQ_GET_ALL_USERS,
-        REQ_GET_MESSAGES
+        REQ_GET_MESSAGES,
+        REQ_GET_ALL_GROUPS,
+        REQ_POST_JOIN_GROUP,
+        REQ_GET_JOINED_GROUPS,
+        REQ_GET_GROUP_MESSAGES
     }
 
     public interface OnResponseStatusListener {
-        void onResponseReceived(RESTCommands commands, Call<?> request, Response<?> response);
+        void onResponseReceived(RESTCommands commands, BaseData<?> data, Response<?> response);
 
-        void onResponseFailed(RESTCommands commands, Call<?> request, Throwable t);
+        void onResponseFailed(RESTCommands commands, BaseData<?> data, Throwable t);
     }
 
     public RESTController(Context context) {
@@ -71,11 +83,32 @@ public class RESTController {
                 break;
             case REQ_GET_MESSAGES:
                 MessageRequest messageRequest;
-                if(data.getBaseData() instanceof MessageRequest){
+                if (data.getBaseData() instanceof MessageRequest) {
                     messageRequest = (MessageRequest) data.getBaseData();
-                    getDirectMessages(command,messageRequest, listener);
+                    getDirectMessages(command, messageRequest, listener);
                 }
-
+                break;
+            case REQ_GET_ALL_GROUPS:
+                getAllGroups(command, listener);
+                break;
+            case REQ_POST_JOIN_GROUP:
+                JoinGroupRequest joinGroupRequest;
+                if (data.getBaseData() instanceof JoinGroupRequest) {
+                    joinGroupRequest = (JoinGroupRequest) data.getBaseData();
+                    postJoinGroup(command, joinGroupRequest, listener);
+                }
+            case REQ_GET_JOINED_GROUPS:
+                UserModel getJoinedReq;
+                if (data.getBaseData() instanceof UserModel) {
+                    getJoinedReq = (UserModel) data.getBaseData();
+                    getJoinedGroups(command, getJoinedReq, listener);
+                }
+            case REQ_GET_GROUP_MESSAGES:
+                GroupMessageRequest groupMessageRequest;
+                if (data.getBaseData() instanceof GroupMessageRequest) {
+                    groupMessageRequest = (GroupMessageRequest) data.getBaseData();
+                    getGroupMessages(command, groupMessageRequest, listener);
+                }
                 break;
         }
     }
@@ -87,14 +120,14 @@ public class RESTController {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (listener != null) {
-                    listener.onResponseReceived(command, call, response);
+                    listener.onResponseReceived(command, new BaseData<>(signUpRequestModel), response);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 if (listener != null) {
-                    listener.onResponseFailed(command, call, t);
+                    listener.onResponseFailed(command, new BaseData<>(signUpRequestModel), t);
                 }
             }
         });
@@ -107,14 +140,14 @@ public class RESTController {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if (listener != null) {
-                    listener.onResponseReceived(command, call, response);
+                    listener.onResponseReceived(command, new BaseData<>(signUpRequestModel), response);
                 }
             }
 
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
                 if (listener != null) {
-                    listener.onResponseFailed(command, call, t);
+                    listener.onResponseFailed(command, new BaseData<>(signUpRequestModel), t);
                 }
             }
         });
@@ -127,14 +160,14 @@ public class RESTController {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if (listener != null) {
-                    listener.onResponseReceived(command, call, response);
+                    listener.onResponseReceived(command, new BaseData<>(otpVerifyRequest), response);
                 }
             }
 
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
                 if (listener != null) {
-                    listener.onResponseFailed(command, call, t);
+                    listener.onResponseFailed(command, new BaseData<>(otpVerifyRequest), t);
                 }
             }
         });
@@ -147,14 +180,14 @@ public class RESTController {
             @Override
             public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
                 if (listener != null) {
-                    listener.onResponseReceived(command, call, response);
+                    listener.onResponseReceived(command, null, response);
                 }
             }
 
             @Override
             public void onFailure(Call<List<UserModel>> call, Throwable t) {
                 if (listener != null) {
-                    listener.onResponseFailed(command, call, t);
+                    listener.onResponseFailed(command, null, t);
                 }
             }
         });
@@ -167,14 +200,96 @@ public class RESTController {
             @Override
             public void onResponse(Call<List<MessageModel>> call, Response<List<MessageModel>> response) {
                 if (listener != null) {
-                    listener.onResponseReceived(command, call, response);
+                    listener.onResponseReceived(command, new BaseData<>(messageRequest), response);
                 }
             }
 
             @Override
             public void onFailure(Call<List<MessageModel>> call, Throwable t) {
                 if (listener != null) {
-                    listener.onResponseFailed(command, call, t);
+                    listener.onResponseFailed(command, new BaseData<>(messageRequest), t);
+                }
+            }
+        });
+    }
+
+    private void getAllGroups(RESTCommands command, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        JoinGroupRequest joinGroupRequest = new JoinGroupRequest();
+        joinGroupRequest.userId = SharedPrefHelper.getUserModel(context)._id;
+        Call<List<GroupResponse>> call = service.getAllGroups(joinGroupRequest);
+        call.enqueue(new Callback<List<GroupResponse>>() {
+            @Override
+            public void onResponse(Call<List<GroupResponse>> call, Response<List<GroupResponse>> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, new BaseData<>(null), response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GroupResponse>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, new BaseData<>(null), t);
+                }
+            }
+        });
+    }
+
+    private void postJoinGroup(RESTCommands command, JoinGroupRequest joinGroupRequest, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<ResponseBody> call = service.postJoinGroup(joinGroupRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, new BaseData<>(joinGroupRequest), response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, new BaseData<>(joinGroupRequest), t);
+                }
+            }
+        });
+    }
+
+    private void getJoinedGroups(RESTCommands command, UserModel getJoinedReq, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<UserModel> call = service.getJoinedGroups(getJoinedReq);
+        call.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, new BaseData<>(getJoinedReq), response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, new BaseData<>(getJoinedReq), t);
+                }
+            }
+        });
+    }
+
+    private void getGroupMessages(RESTCommands command, GroupMessageRequest groupMessageRequest, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<List<MessageModel>> call = service.getGrpMessages(groupMessageRequest);
+        call.enqueue(new Callback<List<MessageModel>>() {
+            @Override
+            public void onResponse(Call<List<MessageModel>> call, Response<List<MessageModel>> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, new BaseData<>(groupMessageRequest), response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MessageModel>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, new BaseData<>(groupMessageRequest), t);
                 }
             }
         });

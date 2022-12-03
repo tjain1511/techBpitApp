@@ -1,32 +1,30 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.indianapp.techbpit.BaseData;
+import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityLoginBinding;
-
-import java.util.SortedMap;
+import com.indianapp.techbpit.model.SignUpRequestModel;
+import com.indianapp.techbpit.model.UserModel;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
     private ActivityLoginBinding binding;
-    private SharedPreferences mPrefs;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        mPrefs = this.getSharedPreferences("com.indianapp.techbpit", MODE_PRIVATE);
         setContentView(binding.getRoot());
         setOnClickListener();
     }
@@ -48,16 +46,14 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
     }
 
     @Override
-    public void onResponseReceived(RESTController.RESTCommands commands, Call<?> request, Response<?> response) {
+    public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         switch (commands) {
             case REQ_POST_LOG_IN_REQ:
                 if (response.isSuccessful()) {
                     UserModel userModel = (UserModel) response.body();
-                    SharedPreferences.Editor editor = mPrefs.edit();
-                    editor.putString("my_email", userModel.email);
-                    editor.commit();
+                    SharedPrefHelper.setUserModel(this, userModel);
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, AllUsersActivity.class);
+                    Intent intent = new Intent(this, JoinGroupActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -69,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
     }
 
     @Override
-    public void onResponseFailed(RESTController.RESTCommands commands, Call<?> request, Throwable t) {
+    public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
             case REQ_POST_LOG_IN_REQ:
                 Toast.makeText(this, "something went wrong", Toast.LENGTH_SHORT).show();

@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,7 +7,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.indianapp.techbpit.BaseData;
+import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityOtpverificationBinding;
+import com.indianapp.techbpit.model.OTPVerifyRequest;
+import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.model.UserModel;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -15,13 +20,11 @@ import retrofit2.Response;
 public class OTPVerificationActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
     private ActivityOtpverificationBinding binding;
     private String email;
-    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOtpverificationBinding.inflate(getLayoutInflater());
-        mPrefs = this.getSharedPreferences("com.indianapp.techbpit", MODE_PRIVATE);
         setContentView(binding.getRoot());
         email = getIntent().getExtras().getString("email");
         binding.otpDescriptionText.setText("Enter one time password sent on " + email);
@@ -45,16 +48,14 @@ public class OTPVerificationActivity extends AppCompatActivity implements RESTCo
     }
 
     @Override
-    public void onResponseReceived(RESTController.RESTCommands commands, Call<?> request, Response<?> response) {
+    public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         switch (commands) {
             case REQ_POST_OTP_VERIFY:
                 if (response.isSuccessful()) {
                     UserModel userModel = (UserModel) response.body();
-                    SharedPreferences.Editor editor = mPrefs.edit();
-                    editor.putString("my_email", userModel.email);
-                    editor.commit();
+                    SharedPrefHelper.setUserModel(this, userModel);
                     Toast.makeText(this, "Verification successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, AllUsersActivity.class);
+                    Intent intent = new Intent(this, JoinGroupActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -66,7 +67,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements RESTCo
     }
 
     @Override
-    public void onResponseFailed(RESTController.RESTCommands commands, Call<?> request, Throwable t) {
+    public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
             case REQ_POST_OTP_VERIFY:
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
