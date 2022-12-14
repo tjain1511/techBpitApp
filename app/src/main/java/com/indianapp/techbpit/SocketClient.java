@@ -11,7 +11,7 @@ import io.socket.client.Socket;
 
 public class SocketClient {
     private static Socket socket;
-    private static String url = "https://techbpitbackend.onrender.com/";
+    private static String url = "https://techbpit-tjhkw.run-ap-south1.goorm.io/";
     private static String myId;
 
     private SocketClient() {
@@ -20,7 +20,7 @@ public class SocketClient {
     public static Socket getSocket(Context ctx) {
 
         if (socket == null || !socket.isActive()) {
-            if(socket!=null) {
+            if (socket != null) {
                 Log.i("isActive", String.valueOf(socket.isActive()));
             }
             initializeSocket(ctx);

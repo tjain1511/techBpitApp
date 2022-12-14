@@ -10,8 +10,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -261,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
 //    };
 
     private void initRecyclerView() {
-        adapter = new MessageAdapter(this,messages, SharedPrefHelper.getUserModel(this)._id);
+        adapter = new MessageAdapter(this, messages, SharedPrefHelper.getUserModel(this)._id);
         binding.rvChat.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -289,6 +292,23 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
                     adapter.notifyItemChanged(messages.size() - 1);
                     binding.rvChat.smoothScrollToPosition(adapter.getItemCount());
 
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener isTyping = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Boolean bool = (Boolean) args[0];
+                    if (bool) {
+                        binding.tvIsTyping.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.tvIsTyping.setVisibility(View.GONE);
+                    }
                 }
             });
         }
@@ -459,6 +479,23 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
         super.onDestroy();
     }
 
+    private long delay = 1000;
+    private long last_text_edit = 0;
+
+    private Handler handler = new Handler();
+    private Runnable input_finish_checker = new Runnable() {
+        public void run() {
+            if (System.currentTimeMillis() > (last_text_edit + delay - 500)) {
+                socket.emit("isTyping", SharedPrefHelper.getUserModel(MainActivity.this)._id, currentUser._id, false, new Ack() {
+                    @Override
+                    public void call(Object... args) {
+                    }
+                });
+//                db.getReference().child("users").child(currentUser.getUid()).child("activeUsers").child(receiverId).child("isTyping").setValue("no");
+            }
+        }
+    };
+
     @Override
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
 
@@ -472,10 +509,35 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
             String event_Name = currentUser._id + "-msg";
             socket.off(event_Name);
             socket.on(event_Name, onNewMessage);
+            socket.on(currentUser._id + "-isTyping", isTyping);
         } else {
             socket.off(groupId + "-msg");
             socket.on(groupId + "-msg", onNewMessage);
         }
+
+        binding.msg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(input_finish_checker);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                last_text_edit = System.currentTimeMillis();
+                handler.postDelayed(input_finish_checker, delay);
+                socket.emit("isTyping", SharedPrefHelper.getUserModel(MainActivity.this)._id, currentUser._id, true, new Ack() {
+                    @Override
+                    public void call(Object... args) {
+                    }
+                });
+
+            }
+        });
     }
 
     @Override

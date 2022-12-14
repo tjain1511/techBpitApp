@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EngineClient {
     private static Retrofit retrofit = null;
-    private static String baseUrl = "https://techbpitbackend.onrender.com";
+    private static String baseUrl = "https://techbpit-tjhkw.run-ap-south1.goorm.io";
 
     public static Retrofit getClient() {
         retrofit = null;

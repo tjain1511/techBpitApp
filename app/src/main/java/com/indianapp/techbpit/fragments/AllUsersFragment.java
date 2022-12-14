@@ -52,7 +52,7 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().getWindow().setStatusBarColor(Color.parseColor("#4169ef"));
-        SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity()).email);
+        SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity())._id);
         socket = SocketClient.getSocket(getActivity());
         try {
             RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_USERS, new BaseData<>(null), this);
