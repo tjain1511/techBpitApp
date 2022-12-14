@@ -38,7 +38,7 @@ public class JoinGroupActivity extends AppCompatActivity implements RESTControll
             e.printStackTrace();
         }
         binding.btnGoToGroups.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AllJoinedGroupsActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         });

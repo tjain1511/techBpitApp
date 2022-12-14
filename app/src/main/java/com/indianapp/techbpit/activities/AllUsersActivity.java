@@ -33,6 +33,7 @@ public class AllUsersActivity extends AppCompatActivity implements RESTControlle
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAllUsersBinding.inflate(getLayoutInflater());
+        
         sharedPreferences = this.getSharedPreferences("com.indianapp.techbpit", MODE_PRIVATE);
         getWindow().setStatusBarColor(Color.parseColor("#4169ef"));
         setContentView(binding.getRoot());

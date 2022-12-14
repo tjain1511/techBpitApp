@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         myEmail = SharedPrefHelper.getUserModel(this).email;
-        getWindow().setStatusBarColor(Color.parseColor("#4169ef"));
+//        getWindow().setStatusBarColor(Color.parseColor("#2460af"));
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
         isGrpChat = getIntent().getBooleanExtra("is_grp_chat", false);
@@ -466,6 +466,7 @@ public class MainActivity extends AppCompatActivity implements RESTController.On
         Log.i("response", String.valueOf(messages.size()));
         messages.clear();
         messages.addAll(oldMessages);
+        binding.pbChatsLoading.setVisibility(View.GONE);
         adapter.notifyDataSetChanged();
         if (!isGrpChat) {
             String event_Name = currentUser._id + "-msg";

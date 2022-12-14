@@ -55,6 +55,7 @@ public class AllJoinedGroupsFragment extends Fragment implements RESTController.
     }
 
     private void initRecyclerView() {
+        binding.pbGroupsLoading.setVisibility(View.GONE);
         adapter = new JoinedGroupsAdapter(getActivity(), joinedGroups);
         binding.rvJoinedGrps.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.rvJoinedGrps.setAdapter(adapter);

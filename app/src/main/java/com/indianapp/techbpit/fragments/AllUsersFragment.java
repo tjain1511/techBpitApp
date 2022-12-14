@@ -62,6 +62,7 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
     }
 
     private void initRecyclerView() {
+        binding.pbUsersLoading.setVisibility(View.GONE);
         AllUserAdapter adapter = new AllUserAdapter(getActivity(), allUsers, sharedPreferences.getString("my_email", ""));
         binding.rvAllUsers.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.rvAllUsers.setAdapter(adapter);
