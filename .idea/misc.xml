@@ -3,10 +3,46 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.174" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/button_sign.xml" value="0.225" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/circle_bg.xml" value="0.225" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.225" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/ic_baseline_image_24.xml" value="0.174" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/ic_bpitlogo.xml" value="0.174" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/ic_bpitlogo_adobe_express.xml" value="0.174" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/ic_send.xml" value="0.225" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/msg_input.xml" value="0.225" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/receiver_msg_shape.xml" value="0.202" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/sender_msg_shape.xml" value="0.202" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_all_chats.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_all_joined_groups.xml" value="0.2" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_all_users.xml" value="0.1" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_app_start.xml" value="0.2421875" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_flow.xml" value="0.2223731884057971" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_group.xml" value="0.2223731884057971" />
-        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_home.xml" value="0.23754789272030652" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_join_group.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_login.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_main.xml" value="0.8109360518999074" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_otpverification.xml" value="0.2223731884057971" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_sign_up.xml" value="0.2223731884057971" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/activity_start.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/custom_receiver_msg_item.xml" value="0.4" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/custom_sender_msg_item.xml" value="0.536" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/fragment_all_joined_groups.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/fragment_all_users.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/fragment_chats.xml" value="0.2210144927536232" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/fragment_explore.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/fragment_home.xml" value="0.228125" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/fragment_profile.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/item_all_user.xml" value="0.24114583333333334" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/item_custom_image_msg.xml" value="0.2" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/item_custom_message.xml" value="0.1" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/item_join_group.xml" value="0.2421875" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/item_joined_groups.xml" value="0.24114583333333334" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/layout/receiver_msg_shape.xml" value="0.2223731884057971" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/menu/home_menu.xml" value="0.24114583333333334" />
+        <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/menu/menu_home.xml" value="0.2421875" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.202" />
       </map>
     </option>

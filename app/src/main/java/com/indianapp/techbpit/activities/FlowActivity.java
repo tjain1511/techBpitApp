@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.indianapp.techbpit.SocketClient;
 import com.indianapp.techbpit.databinding.ActivityFlowBinding;
 
 public class FlowActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class FlowActivity extends AppCompatActivity {
         binding = ActivityFlowBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setOnClickListener();
+//        Picasso.get().load("https://res.cloudinary.com/dmigta0dz/image/upload/v1667237229/bp7xhe2jyte8srslr60y.jpg").into(binding.imageView2);
     }
 
     private void setOnClickListener() {
