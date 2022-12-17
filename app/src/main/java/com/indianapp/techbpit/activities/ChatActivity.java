@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +31,8 @@ import com.cloudinary.android.callback.UploadCallback;
 import com.google.gson.Gson;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
+import com.indianapp.techbpit.BottomSheetFragment.BottomSheetImageSource;
+import com.indianapp.techbpit.BottomSheetImageSourceListener;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.SocketClient;
 import com.indianapp.techbpit.adapters.ChatAdapter;
@@ -61,13 +62,13 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import retrofit2.Response;
 
-public class ChatActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
+public class ChatActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener, BottomSheetImageSourceListener {
     private static final int PERMISSION_CODE = 1;
     private static final int ATTACHMENT_CHOICE_TAKE_PHOTO = 0x1002;
     private static final int REQUEST_FILE_DOCUMENT = 0x001;
     private static final long delay = 1000;
+    private static final int ATTACHMENT_CHOICE_CHOOSE_IMAGE = 0x1001;
     private long last_text_edit = 0;
-
     private Socket socket;
     private ArrayList<MessageModel> messages = new ArrayList<>();
     private ActivityMainBinding binding;
@@ -80,7 +81,6 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     private boolean isGrpChat;
     private String messageEvent;
     private String typingEvent;
-
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -138,7 +138,6 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             }
         }
     };
-
 
     @Override
     protected void onResume() {
@@ -258,17 +257,10 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     }
 
     private void listenEvents() {
-        if (!isGrpChat) {
-            socket.off(messageEvent);
-            socket.on(messageEvent, onNewMessage);
-            socket.off(typingEvent);
-            socket.on(typingEvent, isTyping);
-        } else {
-            socket.off(messageEvent);
-            socket.on(messageEvent, onNewMessage);
-            socket.off(typingEvent);
-            socket.on(typingEvent, isTyping);
-        }
+        socket.off(messageEvent);
+        socket.on(messageEvent, onNewMessage);
+        socket.off(typingEvent);
+        socket.on(typingEvent, isTyping);
     }
 
     private void setupMessageBoxTextWatcher() {
@@ -389,14 +381,6 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
         return jsonObject;
     }
 
-    private void initRecyclerView() {
-        adapter = new ChatAdapter(this, messages, SharedPrefHelper.getUserModel(this)._id);
-        binding.rvChat.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        linearLayoutManager.setStackFromEnd(true);
-        binding.rvChat.setLayoutManager(linearLayoutManager);
-    }
-
 //    private void dispatchFileSelectionIntent() {
 //        if (isFinishing() || isDestroyed()) {
 //            Toast.makeText(this, "something went wrong", Toast.LENGTH_SHORT).show();
@@ -408,6 +392,14 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
 //        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 //        startActivityForResult(intent, REQUEST_FILE_DOCUMENT);
 //    }
+
+    private void initRecyclerView() {
+        adapter = new ChatAdapter(this, messages, SharedPrefHelper.getUserModel(this)._id);
+        binding.rvChat.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setStackFromEnd(true);
+        binding.rvChat.setLayoutManager(linearLayoutManager);
+    }
 
     private void configCloudinary() {
         config.put("cloud_name", "dmigta0dz");
@@ -441,7 +433,7 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchCameraIntent();
+
             } else {
                 Toast.makeText(ChatActivity.this, "permission denied", Toast.LENGTH_SHORT).show();
             }
@@ -461,6 +453,13 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, filePath);
         startActivityForResult(intent, ATTACHMENT_CHOICE_TAKE_PHOTO);
+    }
+
+    private void dispatchGalleryIntent() {
+        Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        Intent chooserIntent = Intent.createChooser(pickIntent, "Select Image");
+        startActivityForResult(chooserIntent, ATTACHMENT_CHOICE_CHOOSE_IMAGE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -572,5 +571,14 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
 
+    }
+
+    @Override
+    public void onSourceClicked(BottomSheetImageSource.SourceType sourceType) {
+        if (sourceType == BottomSheetImageSource.SourceType.CAMERA) {
+            dispatchCameraIntent();
+        } else if (sourceType == BottomSheetImageSource.SourceType.GALLERY) {
+            dispatchGalleryIntent();
+        }
     }
 }

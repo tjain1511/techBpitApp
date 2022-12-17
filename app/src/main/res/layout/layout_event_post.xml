@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/organizer_name"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_edittext_grey_line"
+        android:hint="Add Organizer Name"
+        android:padding="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+
+        <LinearLayout
+            android:id="@+id/ll_event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_edittext_grey_line">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingVertical="16dp"
+                android:paddingLeft="16dp"
+                android:text="Date:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_event_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="4dp"
+                android:text="15/11/2000"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_event_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_edittext_grey_line">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingVertical="16dp"
+                android:paddingLeft="16dp"
+                android:text="Time:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_event_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="4dp"
+                android:text="4:00 pm"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:text="Select Event Mode" />
+
+    <RelativeLayout
+        android:id="@+id/spnr_container"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp">
+
+        <Spinner
+            android:id="@+id/spnr_select_mode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_edittext_grey_line"
+            android:paddingStart="16dp" />
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_arrow_down" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/meeting_link"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_edittext_grey_line"
+        android:hint="Add Meeting Link"
+        android:padding="16dp" />
+
+
+    <EditText
+        android:id="@+id/meeting_venue"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_edittext_grey_line"
+        android:hint="Add Venue"
+        android:padding="16dp" />
+
+
+</LinearLayout>

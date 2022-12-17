@@ -7,6 +7,7 @@ import com.indianapp.techbpit.model.MessageModel;
 import com.indianapp.techbpit.model.MessageRequest;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
 import com.indianapp.techbpit.model.SignUpRequestModel;
+import com.indianapp.techbpit.model.SocialPostRequest;
 import com.indianapp.techbpit.model.UserModel;
 
 import java.util.List;
@@ -39,9 +40,12 @@ public interface EngineService {
     @POST("/joinGroup")
     Call<ResponseBody> postJoinGroup(@Body JoinGroupRequest joinGroupRequest);
 
-    @POST("/getJoinedGroup")
+    @POST("/recentGroupChat")
     Call<UserModel> getJoinedGroups(@Body UserModel JoinedGroups);
 
     @POST("/groupMessage")
     Call<List<MessageModel>> getGrpMessages(@Body GroupMessageRequest groupId);
+
+    @POST("/createPost")
+    Call<ResponseBody> postSocialPost(@Body SocialPostRequest postRequest);
 }

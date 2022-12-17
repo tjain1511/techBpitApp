@@ -10,6 +10,7 @@ import com.indianapp.techbpit.model.MessageModel;
 import com.indianapp.techbpit.model.MessageRequest;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
 import com.indianapp.techbpit.model.SignUpRequestModel;
+import com.indianapp.techbpit.model.SocialPostRequest;
 import com.indianapp.techbpit.model.UserModel;
 
 import java.util.List;
@@ -91,6 +92,13 @@ public class RESTController {
                 if (data.getBaseData() instanceof GroupMessageRequest) {
                     groupMessageRequest = (GroupMessageRequest) data.getBaseData();
                     getGroupMessages(command, groupMessageRequest, listener);
+                }
+                break;
+            case REQ_POST_POST:
+                SocialPostRequest socialPostRequest;
+                if (data.getBaseData() instanceof SocialPostRequest) {
+                    socialPostRequest = (SocialPostRequest) data.getBaseData();
+                    postSocialPost(command, socialPostRequest, listener);
                 }
                 break;
         }
@@ -278,6 +286,26 @@ public class RESTController {
         });
     }
 
+    private void postSocialPost(RESTCommands command, SocialPostRequest socialPostRequest, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<ResponseBody> call = service.postSocialPost(socialPostRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, new BaseData<>(socialPostRequest), response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, new BaseData<>(socialPostRequest), t);
+                }
+            }
+        });
+    }
+
     public enum RESTCommands {
         REQ_POST_SIGN_UP_REQ,
         REQ_POST_LOG_IN_REQ,
@@ -287,7 +315,8 @@ public class RESTController {
         REQ_GET_ALL_GROUPS,
         REQ_POST_JOIN_GROUP,
         REQ_GET_JOINED_GROUPS,
-        REQ_GET_GROUP_MESSAGES
+        REQ_GET_GROUP_MESSAGES,
+        REQ_POST_POST
     }
 
     public interface OnResponseStatusListener {

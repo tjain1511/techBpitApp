@@ -6,4 +6,5 @@ public class GroupResponse {
     public String image;
     public String description;
     public boolean isJoined;
+    public GroupRecentMessage lastMessage;
 }
