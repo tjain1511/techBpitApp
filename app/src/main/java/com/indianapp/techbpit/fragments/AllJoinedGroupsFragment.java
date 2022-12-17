@@ -10,8 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.indianapp.techbpit.BaseData;
-import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.JoinedGroupsAdapter;
 import com.indianapp.techbpit.databinding.FragmentAllJoinedGroupsBinding;

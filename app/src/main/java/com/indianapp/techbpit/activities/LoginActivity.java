@@ -1,20 +1,18 @@
 package com.indianapp.techbpit.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.indianapp.techbpit.BaseData;
-import com.indianapp.techbpit.RESTController;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityLoginBinding;
 import com.indianapp.techbpit.model.SignUpRequestModel;
 import com.indianapp.techbpit.model.UserModel;
 
-import retrofit2.Call;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
@@ -53,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
                     UserModel userModel = (UserModel) response.body();
                     SharedPrefHelper.setUserModel(this, userModel);
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, JoinGroupActivity.class);
+                    Intent intent = new Intent(this, HomeActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -76,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, AppStartActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }

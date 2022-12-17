@@ -3,18 +3,16 @@ package com.indianapp.techbpit.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.indianapp.techbpit.BaseData;
+import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityOtpverificationBinding;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
-import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.model.UserModel;
 
-import retrofit2.Call;
 import retrofit2.Response;
 
 public class OTPVerificationActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
@@ -77,7 +75,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements RESTCo
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, AppStartActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }

@@ -12,25 +12,26 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.indianapp.techbpit.model.MessageModel;
 import com.indianapp.techbpit.R;
+import com.indianapp.techbpit.databinding.CustomDateMsgItemBinding;
 import com.indianapp.techbpit.databinding.CustomReceiverMsgItemBinding;
 import com.indianapp.techbpit.databinding.CustomSenderMsgItemBinding;
-import com.squareup.picasso.Picasso;
+import com.indianapp.techbpit.model.MessageModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<MessageModel> messages;
+public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_SEND = 1;
     private static final int ITEM_RECEIVE = 2;
+    private static final int ITEM_DATE = 3;
+    private ArrayList<MessageModel> messages;
     private String my_id;
     private Context ctx;
 
-    public MessageAdapter(Context ctx, ArrayList<MessageModel> messages, String my_id) {
+    public ChatAdapter(Context ctx, ArrayList<MessageModel> messages, String my_id) {
         this.ctx = ctx;
         this.messages = messages;
         this.my_id = my_id;
@@ -41,8 +42,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == ITEM_SEND) {
             return new SentMessageViewHolder(CustomSenderMsgItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-        } else {
+        } else if (viewType == ITEM_RECEIVE) {
             return new ReceivedMessageViewHolder(CustomReceiverMsgItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        } else {
+            return new MessagesDateViewHolder(CustomDateMsgItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
     }
 
@@ -52,11 +55,17 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((SentMessageViewHolder) holder).onBind(position);
         } else if (getItemViewType(position) == ITEM_RECEIVE) {
             ((ReceivedMessageViewHolder) holder).onBind(position);
+        } else if (getItemViewType(position) == ITEM_DATE) {
+            ((MessagesDateViewHolder) holder).onBind(position);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (!TextUtils.isEmpty(messages.get(position).date)) {
+            return ITEM_DATE;
+        }
+
         if (messages.get(position).sender.equalsIgnoreCase(my_id)) {
             return ITEM_SEND;
         } else {
@@ -84,12 +93,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public void onBind(int position) {
             Date time = new Date(Long.valueOf(messages.get(position).timestamp));
-            if (position == 0) {
-                binding.date.setVisibility(View.VISIBLE);
-                binding.date.setText("Today");
-            } else {
-                binding.date.setVisibility(View.GONE);
-            }
+//            if (position == 0) {
+//                binding.date.setVisibility(View.VISIBLE);
+//                binding.date.setText("Today");
+//            } else {
+//                binding.date.setVisibility(View.GONE);
+//            }
             if (URLUtil.isValidUrl(messages.get(position).imageUrl)) {
                 if (messages.get(position).isSent) {
                     binding.imgTime.setVisibility(View.VISIBLE);
@@ -134,12 +143,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onBind(int position) {
             Date time = new Date(Long.valueOf(messages.get(position).timestamp));
             Log.i("position_size", String.valueOf(messages.size()));
-            if (position == 0) {
-                binding.date.setVisibility(View.VISIBLE);
-                binding.date.setText("Today");
-            } else {
-                binding.date.setVisibility(View.GONE);
-            }
+//            if (position == 0) {
+//                binding.date.setVisibility(View.VISIBLE);
+//                binding.date.setText("Today");
+//            } else {
+//                binding.date.setVisibility(View.GONE);
+//            }
             if (URLUtil.isValidUrl(messages.get(position).imageUrl)) {
                 binding.receiverMsg.setVisibility(View.GONE);
                 binding.imgTime.setText(sf.format(time));
@@ -150,6 +159,28 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 binding.receiverImg.setVisibility(View.GONE);
                 binding.time.setText(sf.format(time));
                 binding.txtMessages.setText(messages.get(position).message);
+            }
+        }
+    }
+
+    public class MessagesDateViewHolder extends RecyclerView.ViewHolder {
+        private SimpleDateFormat sfd;
+        private CustomDateMsgItemBinding binding;
+
+
+        public MessagesDateViewHolder(@NonNull CustomDateMsgItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+            sfd = new SimpleDateFormat("dd/MM/yyyy",
+                    Locale.getDefault());
+        }
+
+        private void onBind(int position) {
+            if (!TextUtils.isEmpty(messages.get(position).date)) {
+                binding.date.setText(messages.get(position).date);
+                binding.date.setVisibility(View.VISIBLE);
+            } else {
+                binding.date.setVisibility(View.GONE);
             }
         }
     }

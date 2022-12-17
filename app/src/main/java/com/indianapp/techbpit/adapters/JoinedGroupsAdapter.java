@@ -9,12 +9,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.indianapp.techbpit.activities.MainActivity;
+import com.indianapp.techbpit.activities.ChatActivity;
 import com.indianapp.techbpit.databinding.ItemJoinedGroupsBinding;
 import com.indianapp.techbpit.model.GroupResponse;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class JoinedGroupsAdapter extends RecyclerView.Adapter<JoinedGroupsAdapter.GroupViewHolder> {
@@ -55,7 +54,7 @@ public class JoinedGroupsAdapter extends RecyclerView.Adapter<JoinedGroupsAdapte
             binding.tvGrpName.setText(joinedGroups.get(position).groupName);
             Picasso.get().load(joinedGroups.get(position).image).into(binding.circleImageView);
             binding.cl.setOnClickListener(v -> {
-                Intent intent = new Intent(ctx, MainActivity.class);
+                Intent intent = new Intent(ctx, ChatActivity.class);
                 intent.putExtra("is_grp_chat", true);
                 intent.putExtra("group_id", joinedGroups.get(position)._id);
                 intent.putExtra("group_name",joinedGroups.get(position).groupName);

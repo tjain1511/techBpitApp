@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.ApiController;
 
 import com.indianapp.techbpit.model.GroupMessageRequest;
 import com.indianapp.techbpit.model.GroupResponse;
@@ -43,5 +43,5 @@ public interface EngineService {
     Call<UserModel> getJoinedGroups(@Body UserModel JoinedGroups);
 
     @POST("/groupMessage")
-    Call<List<MessageModel>> getGrpMessages(@Body GroupMessageRequest groupMessageRequest);
+    Call<List<MessageModel>> getGrpMessages(@Body GroupMessageRequest groupId);
 }

@@ -6,14 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.indianapp.techbpit.BaseData;
-import com.indianapp.techbpit.RESTController;
-import com.indianapp.techbpit.activities.AppStartActivity;
-import com.indianapp.techbpit.activities.OTPVerificationActivity;
+import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.databinding.ActivitySignUpBinding;
 import com.indianapp.techbpit.model.SignUpRequestModel;
 
-import retrofit2.Call;
 import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
@@ -78,7 +75,7 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, AppStartActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }

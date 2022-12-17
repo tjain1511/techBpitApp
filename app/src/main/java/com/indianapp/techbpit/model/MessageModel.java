@@ -20,4 +20,6 @@ public class MessageModel {
 
     //default true to save reduntant fields
     public boolean isSent = true;
+
+    public String date;
 }

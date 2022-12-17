@@ -1,24 +1,22 @@
 package com.indianapp.techbpit.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.indianapp.techbpit.BaseData;
-import com.indianapp.techbpit.RESTController;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.AllGroupsAdapter;
-import com.indianapp.techbpit.adapters.JoinedGroupsAdapter;
 import com.indianapp.techbpit.databinding.ActivityJoinGroupBinding;
 import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
 
 import java.util.ArrayList;
 
-import retrofit2.Call;
 import retrofit2.Response;
 
 public class JoinGroupActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener, AllGroupsAdapter.JoinListener {
@@ -56,14 +54,18 @@ public class JoinGroupActivity extends AppCompatActivity implements RESTControll
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         switch (commands) {
             case REQ_POST_JOIN_GROUP:
-                int position = ((JoinGroupRequest) request.getBaseData()).position;
-                groupsList.get(position).isJoined = true;
-                adapter.notifyDataSetChanged();
+                if (response.isSuccessful()) {
+                    int position = ((JoinGroupRequest) request.getBaseData()).position;
+                    groupsList.get(position).isJoined = true;
+                    adapter.notifyDataSetChanged();
+                }
                 break;
             case REQ_GET_ALL_GROUPS:
-                groupsList.addAll((ArrayList<GroupResponse>) response.body());
-                adapter.notifyDataSetChanged();
-                binding.btnGoToGroups.setVisibility(View.VISIBLE);
+                if (response.isSuccessful()) {
+                    groupsList.addAll((ArrayList<GroupResponse>) response.body());
+                    adapter.notifyDataSetChanged();
+                    binding.btnGoToGroups.setVisibility(View.VISIBLE);
+                }
                 break;
         }
 

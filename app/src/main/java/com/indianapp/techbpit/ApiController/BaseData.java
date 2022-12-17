@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.ApiController;
 
 public class BaseData<T> {
     private T object;

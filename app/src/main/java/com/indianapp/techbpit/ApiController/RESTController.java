@@ -1,7 +1,8 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.ApiController;
 
 import android.content.Context;
 
+import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.model.GroupMessageRequest;
 import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
@@ -21,24 +22,6 @@ import retrofit2.Response;
 public class RESTController {
     private static RESTController instance = null;
     private Context context;
-
-    public enum RESTCommands {
-        REQ_POST_SIGN_UP_REQ,
-        REQ_POST_LOG_IN_REQ,
-        REQ_POST_OTP_VERIFY,
-        REQ_GET_ALL_USERS,
-        REQ_GET_MESSAGES,
-        REQ_GET_ALL_GROUPS,
-        REQ_POST_JOIN_GROUP,
-        REQ_GET_JOINED_GROUPS,
-        REQ_GET_GROUP_MESSAGES
-    }
-
-    public interface OnResponseStatusListener {
-        void onResponseReceived(RESTCommands commands, BaseData<?> data, Response<?> response);
-
-        void onResponseFailed(RESTCommands commands, BaseData<?> data, Throwable t);
-    }
 
     public RESTController(Context context) {
         this.context = context;
@@ -275,24 +258,42 @@ public class RESTController {
         });
     }
 
-    private void getGroupMessages(RESTCommands command, GroupMessageRequest groupMessageRequest, OnResponseStatusListener listener) {
+    private void getGroupMessages(RESTCommands command, GroupMessageRequest groupId, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        Call<List<MessageModel>> call = service.getGrpMessages(groupMessageRequest);
+        Call<List<MessageModel>> call = service.getGrpMessages(groupId);
         call.enqueue(new Callback<List<MessageModel>>() {
             @Override
             public void onResponse(Call<List<MessageModel>> call, Response<List<MessageModel>> response) {
                 if (listener != null) {
-                    listener.onResponseReceived(command, new BaseData<>(groupMessageRequest), response);
+                    listener.onResponseReceived(command, new BaseData<>(groupId), response);
                 }
             }
 
             @Override
             public void onFailure(Call<List<MessageModel>> call, Throwable t) {
                 if (listener != null) {
-                    listener.onResponseFailed(command, new BaseData<>(groupMessageRequest), t);
+                    listener.onResponseFailed(command, new BaseData<>(groupId), t);
                 }
             }
         });
+    }
+
+    public enum RESTCommands {
+        REQ_POST_SIGN_UP_REQ,
+        REQ_POST_LOG_IN_REQ,
+        REQ_POST_OTP_VERIFY,
+        REQ_GET_ALL_USERS,
+        REQ_GET_MESSAGES,
+        REQ_GET_ALL_GROUPS,
+        REQ_POST_JOIN_GROUP,
+        REQ_GET_JOINED_GROUPS,
+        REQ_GET_GROUP_MESSAGES
+    }
+
+    public interface OnResponseStatusListener {
+        void onResponseReceived(RESTCommands commands, BaseData<?> data, Response<?> response);
+
+        void onResponseFailed(RESTCommands commands, BaseData<?> data, Throwable t);
     }
 
 

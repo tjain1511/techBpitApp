@@ -7,15 +7,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.indianapp.techbpit.RESTController;
 import com.indianapp.techbpit.databinding.ItemJoinGroupBinding;
 import com.indianapp.techbpit.model.GroupResponse;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class AllGroupsAdapter extends RecyclerView.Adapter<AllGroupsAdapter.GroupHolder>  {
     private ArrayList<GroupResponse> groupsList;

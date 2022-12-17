@@ -15,8 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.indianapp.techbpit.BaseData;
-import com.indianapp.techbpit.RESTController;
+import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.SocketClient;
 import com.indianapp.techbpit.adapters.AllUserAdapter;
@@ -51,7 +51,6 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().getWindow().setStatusBarColor(Color.parseColor("#4169ef"));
         SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity())._id);
         socket = SocketClient.getSocket(getActivity());
         try {

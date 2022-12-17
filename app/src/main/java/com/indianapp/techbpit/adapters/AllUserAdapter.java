@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.indianapp.techbpit.databinding.ItemAllUserBinding;
 import com.indianapp.techbpit.model.UserModel;
-import com.indianapp.techbpit.activities.MainActivity;
+import com.indianapp.techbpit.activities.ChatActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserAdapter.UserView
                 binding.userName.setText(allUsers.get(position).username);
                 Picasso.get().load(allUsers.get(position).imageUrl).into(binding.circleImageView);
                 binding.cl.setOnClickListener(v -> {
-                    Intent intent = new Intent(ctx, MainActivity.class);
+                    Intent intent = new Intent(ctx, ChatActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("current_user", allUsers.get(position));
                     intent.putExtra("bundle", bundle);
