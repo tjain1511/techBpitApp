@@ -8,16 +8,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.indianapp.techbpit.databinding.ItemJoinGroupBinding;
+import com.indianapp.techbpit.model.AllGroupResponse;
 import com.indianapp.techbpit.model.GroupResponse;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class AllGroupsAdapter extends RecyclerView.Adapter<AllGroupsAdapter.GroupHolder>  {
-    private ArrayList<GroupResponse> groupsList;
+    private ArrayList<AllGroupResponse> groupsList;
     private JoinListener listener;
 
-    public AllGroupsAdapter(ArrayList<GroupResponse> groupsList) {
+    public AllGroupsAdapter(ArrayList<AllGroupResponse> groupsList) {
         this.groupsList = groupsList;
     }
 

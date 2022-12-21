@@ -56,7 +56,10 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
     implementation 'io.ak1:bubbletabbar:1.0.8'
     implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
-    implementation 'com.github.imagekit-developer:imagekit-java:2.0.0'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation "com.splitwise:tokenautocomplete:3.0.1@aar"
+
+//    implementation 'com.github.imagekit-developer:imagekit-java:2.0.0'
 
 
 }

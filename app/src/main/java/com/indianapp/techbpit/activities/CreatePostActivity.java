@@ -38,6 +38,7 @@ import com.cloudinary.android.callback.UploadCallback;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetImageSource;
+import com.indianapp.techbpit.BottomSheetFragment.BottomSheetPostType;
 import com.indianapp.techbpit.BottomSheetImageSourceListener;
 import com.indianapp.techbpit.R;
 import com.indianapp.techbpit.SharedPrefHelper;
@@ -72,6 +73,7 @@ public class CreatePostActivity extends AppCompatActivity implements RESTControl
     private Uri filePath;
     private String imageUrl;
     private ActivityCreatePostBinding binding;
+    private BottomSheetPostType.PostType postType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,32 +89,37 @@ public class CreatePostActivity extends AppCompatActivity implements RESTControl
         } catch (Exception e) {
 
         }
-//        ImageKit.Companion.init(
-//                getApplicationContext(),
-//                "your_public_api_key",
-//                "https://ik.imagekit.io/your_imagekit_id",
-//                TransformationPosition.PATH,
-//                "your_authentication_endpoint"
-//        );
 
 
-        if (getIntent().getStringExtra("post_type") != null) {
-
+        if (getIntent().getSerializableExtra("post_type") != null) {
+            postType = (BottomSheetPostType.PostType) getIntent().getSerializableExtra("post_type");
         }
-        setupPostType();
-        setupModeSpinner();
-
-        binding.eventPost.tvEventTime.setText(getFormattedTimeSimple(System.currentTimeMillis()));
-        binding.eventPost.tvEventDate.setText(getFormattedDateSimple(System.currentTimeMillis()));
+        if (postType != null) {
+            setupPostType();
+        }
         setupOnClickListener();
     }
 
     private void setupPostType() {
-
-
-    }
-
-    private void setupEventPost() {
+        binding.eventPost.rootLayout.setVisibility(View.GONE);
+        binding.communityPost.rootLayout.setVisibility(View.GONE);
+        binding.resourcePost.rootLayout.setVisibility(View.GONE);
+        switch (postType) {
+            case EVENT_POST:
+                binding.eventPost.rootLayout.setVisibility(View.VISIBLE);
+                binding.eventPost.tvEventTime.setText(getFormattedTimeSimple(System.currentTimeMillis()));
+                binding.eventPost.tvEventDate.setText(getFormattedDateSimple(System.currentTimeMillis()));
+                setupModeSpinner();
+                break;
+            case RESOURCE_POST:
+                binding.resourcePost.rootLayout.setVisibility(View.VISIBLE);
+                break;
+            case COMMUNITY_POST:
+                binding.communityPost.rootLayout.setVisibility(View.VISIBLE);
+                break;
+            default:
+                break;
+        }
     }
 
     private void setupOnClickListener() {
@@ -129,18 +136,23 @@ public class CreatePostActivity extends AppCompatActivity implements RESTControl
         SocialPostRequestItem socialPostRequestItem = new SocialPostRequestItem();
         socialPostRequestItem.author = SharedPrefHelper.getUserModel(this)._id;
         socialPostRequestItem.timestamp = String.valueOf(System.currentTimeMillis());
-        socialPostRequestItem.postType = "eventPost";
-        socialPostRequestItem.groupId = "639d9f75886fb2b2eb795e7b";
+        socialPostRequestItem.postType = postType.label;
+        socialPostRequestItem.groupId = "639f0f280b4f83601bba47b1";
         socialPostRequestItem.imageUrl = imageUrl;
         socialPostRequestItem.eventDate = (String) binding.eventPost.tvEventDate.getText();
         socialPostRequestItem.eventTime = (String) binding.eventPost.tvEventTime.getText();
-        socialPostRequestItem.mode = (String) binding.eventPost.spnrSelectMode.getSelectedItem().toString().toLowerCase();
+        if (binding.eventPost.spnrSelectMode.getSelectedItem() != null)
+            socialPostRequestItem.mode = (String) binding.eventPost.spnrSelectMode.getSelectedItem().toString().toLowerCase();
         socialPostRequestItem.organizer = String.valueOf(binding.eventPost.organizerName.getText());
         socialPostRequestItem.topic = String.valueOf(binding.title.getText());
         socialPostRequestItem.description = String.valueOf(binding.description.getText());
-        socialPostRequestItem.resourceTime = "";
+        socialPostRequestItem.resourceTime = String.valueOf(binding.resourcePost.tvReadTime.getText());
         socialPostRequestItem.venue = String.valueOf(binding.eventPost.meetingVenue.getText());
-        socialPostRequestItem.link = String.valueOf(binding.eventPost.meetingLink.getText());
+        if (postType.equals(BottomSheetPostType.PostType.EVENT_POST)) {
+            socialPostRequestItem.link = String.valueOf(binding.eventPost.meetingLink.getText());
+        } else if (postType.equals(BottomSheetPostType.PostType.RESOURCE_POST)) {
+            socialPostRequestItem.link = String.valueOf(binding.resourcePost.tvResourceLink.getText());
+        }
 
         socialPostRequest.post = socialPostRequestItem;
 
@@ -381,7 +393,10 @@ public class CreatePostActivity extends AppCompatActivity implements RESTControl
 
     @Override
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> data, Response<?> response) {
-
+        if (response.isSuccessful()) {
+            Toast.makeText(this, "Posted Successfully", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override

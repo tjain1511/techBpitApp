@@ -3,7 +3,6 @@ package com.indianapp.techbpit.fragments;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +53,7 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
         SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity())._id);
         socket = SocketClient.getSocket(getActivity());
         try {
-            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_USERS, new BaseData<>(null), this);
+            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_RECENT_USERS, new BaseData<>(SharedPrefHelper.getUserModel(getActivity())), this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,7 +70,7 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
     @Override
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         switch (commands) {
-            case REQ_GET_ALL_USERS:
+            case REQ_GET_RECENT_USERS:
                 if (response.isSuccessful()) {
                     allUsers = (ArrayList<UserModel>) response.body();
                     initRecyclerView();
@@ -82,7 +81,7 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
     @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
-            case REQ_GET_ALL_USERS:
+            case REQ_GET_RECENT_USERS:
                 Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_SHORT).show();
         }
     }

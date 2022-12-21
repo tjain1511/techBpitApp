@@ -1,66 +1,129 @@
 package com.indianapp.techbpit.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.indianapp.techbpit.R;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ProfileFragment extends Fragment {
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
+import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
+import com.indianapp.techbpit.adapters.SkillAdapter;
+import com.indianapp.techbpit.adapters.SocialLinksAdapter;
+import com.indianapp.techbpit.databinding.FragmentProfileBinding;
+import com.indianapp.techbpit.model.SocialPlatform;
+import com.indianapp.techbpit.model.UserModel;
+import com.squareup.picasso.Picasso;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.ArrayList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import retrofit2.Response;
+
+public class ProfileFragment extends Fragment implements RESTController.OnResponseStatusListener {
+    private FragmentProfileBinding binding;
+    private ArrayList<String> skillsList = new ArrayList<>();
+    private ArrayList<SocialPlatform> socialList = new ArrayList<>();
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        intiSkillsRecyclerView();
+        initSocialLinksRecyclerView();
+        binding.getRoot().setVisibility(View.GONE);
+        try {
+            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_USER_PROFILE, null, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return binding.getRoot();
+    }
+
+    private void intiSkillsRecyclerView() {
+//        prepareSkillList();
+        SkillAdapter skillAdapter = new SkillAdapter(skillsList);
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getActivity());
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+        binding.rvSkill.setLayoutManager(layoutManager);
+        binding.rvSkill.setAdapter(skillAdapter);
+    }
+
+    private void initSocialLinksRecyclerView() {
+        SocialLinksAdapter socialLinksAdapter = new SocialLinksAdapter(getActivity(), socialList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        binding.rvSocialLink.setLayoutManager(layoutManager);
+        binding.rvSocialLink.setAdapter(socialLinksAdapter);
+    }
+
+//    private void prepareSocialList() {
+//        SocialLink socialLink = new SocialLink();
+//        socialLink.platformLink = "https://www.codechef.com/user";
+//        socialLink.platformImage = "https://img.icons8.com/ios7/2x/000000/codechef.png";
+//
+//        SocialLink socialLink1 = new SocialLink();
+//        socialLink1.platformLink = "https://in.linkedin.com/";
+//        socialLink1.platformImage = "https://cdn-icons-png.flaticon.com/512/174/174857.png";
+//
+//        SocialLink socialLink2 = new SocialLink();
+//        socialLink2.platformLink = "https://leetcode.com/";
+//        socialLink2.platformImage = "https://cdn.iconscout.com/icon/free/png-256/leetcode-3628885-3030025.png";
+//
+//
+//        socialList.add(socialLink);
+//        socialList.add(socialLink1);
+//        socialList.add(socialLink2);
+//    }
+
+//    private void prepareSkillList() {
+//        skillsList.add("Android Development");
+//        skillsList.add("Android");
+//        skillsList.add("Node");
+//        skillsList.add("Django");
+//        skillsList.add("Redis");
+//        skillsList.add("SQL");
+//        skillsList.add("MongoDB");
+//        skillsList.add("XML");
+//        skillsList.add("Web Development");
+//        skillsList.add("Java");
+//        skillsList.add("JavaScript");
+//        skillsList.add("Dependency Injection");
+//    }
+
+    @Override
+    public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> data, Response<?> response) {
+        if (response.isSuccessful()) {
+            UserModel userModel = (UserModel) response.body();
+            binding.getRoot().setVisibility(View.VISIBLE);
+            skillsList = (ArrayList<String>) userModel.skills;
+            socialList = (ArrayList<SocialPlatform>) userModel.socialLinks;
+            binding.tvUserName.setText(userModel.username);
+            binding.tvLocation.setText(userModel.city + ", " + userModel.state);
+            binding.tvAbt.setText(userModel.about);
+            Picasso.get().load(userModel.imageUrl).into(binding.ivProfilePicture);
+            initSocialLinksRecyclerView();
+            intiSkillsRecyclerView();
+        }
+    }
+
+    @Override
+    public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> data, Throwable t) {
+
     }
 }

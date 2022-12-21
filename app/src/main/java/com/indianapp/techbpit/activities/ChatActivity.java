@@ -66,7 +66,7 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     private static final int PERMISSION_CODE = 1;
     private static final int ATTACHMENT_CHOICE_TAKE_PHOTO = 0x1002;
     private static final int REQUEST_FILE_DOCUMENT = 0x001;
-    private static final long delay = 1000;
+    private static final long DELAY = 1000;
     private static final int ATTACHMENT_CHOICE_CHOOSE_IMAGE = 0x1001;
     private long last_text_edit = 0;
     private Socket socket;
@@ -123,7 +123,7 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     private Handler handler = new Handler();
     private Runnable input_finish_checker = new Runnable() {
         public void run() {
-            if (System.currentTimeMillis() > (last_text_edit + delay - 500)) {
+            if (System.currentTimeMillis() > (last_text_edit + DELAY - 500)) {
                 String receiverId;
                 if (isGrpChat) {
                     receiverId = groupId;
@@ -181,7 +181,7 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     private void setupIsGrpChat() {
         isGrpChat = getIntent().getBooleanExtra("is_grp_chat", false);
         if (!isGrpChat) {
-            receiverUser = (UserModel) getIntent().getBundleExtra("bundle").getSerializable("current_user");
+            receiverUser = (UserModel) getIntent().getExtras().getSerializable("current_user");
             messageEvent = receiverUser._id + "-msg";
             typingEvent = receiverUser._id + "-isTyping";
             binding.txt.setText(receiverUser.username);
@@ -192,7 +192,6 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             typingEvent = groupId + "-isTyping";
             binding.txt.setText(getIntent().getStringExtra("group_name"));
             Picasso.get().load(getIntent().getStringExtra("group_image")).into(binding.imgC);
-
         }
     }
 
@@ -278,7 +277,7 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             public void afterTextChanged(Editable s) {
 
                 last_text_edit = System.currentTimeMillis();
-                handler.postDelayed(input_finish_checker, delay);
+                handler.postDelayed(input_finish_checker, DELAY);
                 String receiverId;
                 if (isGrpChat) {
                     receiverId = groupId;

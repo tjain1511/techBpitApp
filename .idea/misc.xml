@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../Android/Sdk/platforms/android-32/data/res/layout/simple_spinner_dropdown_item.xml" value="0.6920374707259953" />
+        <entry key="../Android/Sdk/platforms/android-32/data/res/layout/simple_spinner_item.xml" value="0.6920374707259953" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.174" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/button_sign.xml" value="0.225" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/drawable/circle_bg.xml" value="0.225" />
@@ -45,30 +47,50 @@
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/menu/menu_home.xml" value="0.2421875" />
         <entry key="..\:/Android_Projects/TechBpit/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.202" />
         <entry key="app/src/main/res/drawable/bg_edittext_grey_line.xml" value="0.1745" />
+        <entry key="app/src/main/res/drawable/bg_grey_filled.xml" value="0.1985" />
         <entry key="app/src/main/res/drawable/bg_post_btn.xml" value="0.1745" />
+        <entry key="app/src/main/res/drawable/bg_post_card.xml" value="0.1745" />
+        <entry key="app/src/main/res/drawable/bg_resource_post.xml" value="0.1745" />
         <entry key="app/src/main/res/drawable/circle_bg.xml" value="0.15" />
         <entry key="app/src/main/res/drawable/ic_arrow_down.xml" value="0.1745" />
         <entry key="app/src/main/res/drawable/ic_arrow_left.xml" value="0.15" />
         <entry key="app/src/main/res/drawable/ic_back_post.xml" value="0.15" />
         <entry key="app/src/main/res/drawable/ic_camera.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_cross.xml" value="0.1985" />
         <entry key="app/src/main/res/drawable/ic_insert_photo.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_minus_svgrepo_com.xml" value="0.1985" />
         <entry key="app/src/main/res/drawable/ic_send.xml" value="0.15" />
         <entry key="app/src/main/res/drawable/sender_msg_shape.xml" value="0.15" />
         <entry key="app/src/main/res/drawable/share_logo_btn_bg.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_all_chats.xml" value="0.6920374707259953" />
+        <entry key="app/src/main/res/layout/activity_all_chats2.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/activity_app_start.xml" value="0.3078125" />
         <entry key="app/src/main/res/layout/activity_create_post.xml" value="0.3778110944527736" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.5903614457831325" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3078125" />
         <entry key="app/src/main/res/layout/activity_otpverification.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_setup_profile.xml" value="0.5444444444444444" />
         <entry key="app/src/main/res/layout/bottom_sheet_image_source.xml" value="1.0" />
-        <entry key="app/src/main/res/layout/bottom_sheet_post_type.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/layout/bottom_sheet_post_type.xml" value="1.0" />
+        <entry key="app/src/main/res/layout/bottom_sheet_start_new_chat.xml" value="0.7078651685393258" />
         <entry key="app/src/main/res/layout/custom_date_msg_item.xml" value="0.75" />
         <entry key="app/src/main/res/layout/custom_receiver_msg_item.xml" value="0.3078125" />
         <entry key="app/src/main/res/layout/custom_sender_msg_item.xml" value="0.3078125" />
+        <entry key="app/src/main/res/layout/fragment_all_users.xml" value="0.6920374707259953" />
         <entry key="app/src/main/res/layout/fragment_chats.xml" value="0.14629629629629629" />
-        <entry key="app/src/main/res/layout/item_join_group.xml" value="0.49375" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.6920374707259953" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.5444444444444444" />
+        <entry key="app/src/main/res/layout/item_all_user.xml" value="0.6920374707259953" />
+        <entry key="app/src/main/res/layout/item_community_post.xml" value="0.9" />
+        <entry key="app/src/main/res/layout/item_custom_skill.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/item_event_post.xml" value="0.7468982630272953" />
+        <entry key="app/src/main/res/layout/item_join_group.xml" value="0.6920374707259953" />
         <entry key="app/src/main/res/layout/item_joined_groups.xml" value="0.6168032786885246" />
-        <entry key="app/src/main/res/layout/layout_community_post.xml" value="0.32916666666666666" />
-        <entry key="app/src/main/res/layout/layout_event_post.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/item_resource_post.xml" value="1.25" />
+        <entry key="app/src/main/res/layout/item_social_link.xml" value="0.5798816568047337" />
+        <entry key="app/src/main/res/layout/layout_add_social_links.xml" value="0.6920374707259953" />
+        <entry key="app/src/main/res/layout/layout_community_post.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/layout_event_post.xml" value="0.6222222222222222" />
         <entry key="app/src/main/res/layout/layout_resource_post.xml" value="0.32916666666666666" />
       </map>
     </option>

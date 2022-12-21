@@ -110,18 +110,15 @@
 
             <include
                 android:id="@+id/community_post"
-                layout="@layout/layout_community_post"
-                android:visibility="gone" />
+                layout="@layout/layout_community_post" />
 
             <include
                 android:id="@+id/resource_post"
-                layout="@layout/layout_resource_post"
-                android:visibility="gone" />
+                layout="@layout/layout_resource_post" />
 
             <include
                 android:id="@+id/event_post"
-                layout="@layout/layout_event_post"
-                android:visibility="visible" />
+                layout="@layout/layout_event_post" />
 
             <Button
                 android:id="@+id/btn_post"

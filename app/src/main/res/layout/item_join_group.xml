@@ -35,6 +35,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginVertical="8dp"
                 android:text="Group Name"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
@@ -43,22 +44,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="12dp"
-                android:text="a very long long long long group description a very long long long long group description a very long long long long group description a very long long long long group description"
-                android:textAlignment="center" />
+                android:text="A very long long long long group description a very long long long long group description a very long long long long group description a very long long long long group description"
+                android:textAlignment="center"
+                android:textColor="#838383" />
 
             <Button
                 android:id="@+id/btn_join"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Join" />
+                android:background="@drawable/bg_post_btn"
+                android:text="Join"
+                android:textColor="@color/white" />
+
             <ProgressBar
                 android:id="@+id/pb_join"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:indeterminateTint="@color/colorPrimary"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_members"
@@ -67,6 +72,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginVertical="5dp"
                 android:text="Joined By: 12 student(s)"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

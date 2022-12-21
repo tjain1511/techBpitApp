@@ -1,5 +1,7 @@
 package com.indianapp.techbpit;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +52,31 @@ public class DateTimeUtils {
     public static String getFormattedDateSimple(Long dateTime) {
         SimpleDateFormat newFormat = new SimpleDateFormat("EEE, dd MMM");
         return newFormat.format(new Date(dateTime));
+    }
+
+    public static String getDateFromFormattedDate(String args) {
+
+        try {
+            DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            DateFormat targetFormat = new SimpleDateFormat("dd");
+            Date date = originalFormat.parse(args);
+            return targetFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getMonthFromFormattedDate(String args) {
+        try {
+            DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            DateFormat targetFormat = new SimpleDateFormat("MMM");
+            Date date = originalFormat.parse(args);
+            return targetFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public static String getFormattedTimeSimple(Long dateTime) {

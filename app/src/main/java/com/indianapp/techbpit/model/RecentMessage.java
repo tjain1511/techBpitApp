@@ -1,25 +1,30 @@
 package com.indianapp.techbpit.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GroupRecentMessage {
+import java.io.Serializable;
+
+public class RecentMessage implements Serializable {
     @SerializedName("message")
+    @Expose
     public String message;
 
     @SerializedName("timestamp")
+    @Expose
     public String timestamp;
 
     @SerializedName("sender")
-    public UserModel sender;
+    @Expose
+    public String sender;
 
     @SerializedName("receiver")
+    @Expose
     public String receiver;
 
     @SerializedName("imageUrl")
+    @Expose
     public String imageUrl;
 
-    //default true to save reduntant fields
-    public boolean isSent = true;
-
-    public String date;
 }
+

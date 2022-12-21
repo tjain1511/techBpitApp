@@ -31,5 +31,21 @@ public class UserModel implements Serializable {
     @Expose
     public String imageUrl;
 
+    @SerializedName("lastMessage")
+    @Expose
+    public RecentMessage lastMessage;
+
+    public String about;
+
+    public String state;
+
+    public String city;
+
+    public String yearOfStudy;
+
+    public List<SocialPlatform> socialLinks;
+
+    public List<String> skills;
+
 
 }

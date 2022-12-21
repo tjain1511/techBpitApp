@@ -12,6 +12,7 @@ import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.AllGroupsAdapter;
 import com.indianapp.techbpit.databinding.ActivityJoinGroupBinding;
+import com.indianapp.techbpit.model.AllGroupResponse;
 import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
 
@@ -21,7 +22,7 @@ import retrofit2.Response;
 
 public class JoinGroupActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener, AllGroupsAdapter.JoinListener {
     private ActivityJoinGroupBinding binding;
-    private ArrayList<GroupResponse> groupsList = new ArrayList<>();
+    private ArrayList<AllGroupResponse> groupsList = new ArrayList<>();
     private AllGroupsAdapter adapter;
 
     @Override
@@ -62,7 +63,7 @@ public class JoinGroupActivity extends AppCompatActivity implements RESTControll
                 break;
             case REQ_GET_ALL_GROUPS:
                 if (response.isSuccessful()) {
-                    groupsList.addAll((ArrayList<GroupResponse>) response.body());
+                    groupsList.addAll((ArrayList<AllGroupResponse>) response.body());
                     adapter.notifyDataSetChanged();
                     binding.btnGoToGroups.setVisibility(View.VISIBLE);
                 }

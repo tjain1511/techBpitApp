@@ -3,16 +3,19 @@ package com.indianapp.techbpit.ApiController;
 import android.content.Context;
 
 import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.model.AllGroupResponse;
 import com.indianapp.techbpit.model.GroupMessageRequest;
-import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
 import com.indianapp.techbpit.model.MessageModel;
 import com.indianapp.techbpit.model.MessageRequest;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
+import com.indianapp.techbpit.model.SetupProfileRequest;
 import com.indianapp.techbpit.model.SignUpRequestModel;
 import com.indianapp.techbpit.model.SocialPostRequest;
+import com.indianapp.techbpit.model.SocialPostResponse;
 import com.indianapp.techbpit.model.UserModel;
 
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -65,6 +68,8 @@ public class RESTController {
             case REQ_GET_ALL_USERS:
                 getAllUsers(command, listener);
                 break;
+            case REQ_GET_RECENT_USERS:
+                getRecentUser(command, listener);
             case REQ_GET_MESSAGES:
                 MessageRequest messageRequest;
                 if (data.getBaseData() instanceof MessageRequest) {
@@ -100,6 +105,19 @@ public class RESTController {
                     socialPostRequest = (SocialPostRequest) data.getBaseData();
                     postSocialPost(command, socialPostRequest, listener);
                 }
+                break;
+            case REQ_GET_ALL_POSTS:
+                getAllPosts(command, listener);
+                break;
+            case REQ_PATCH_UPDATE_USER_PROFILE:
+                SetupProfileRequest setupProfileRequest;
+                if (data.getBaseData() instanceof SetupProfileRequest) {
+                    setupProfileRequest = (SetupProfileRequest) data.getBaseData();
+                    updateUserProfile(command, setupProfileRequest, listener);
+                }
+            case REQ_GET_USER_PROFILE:
+                getUserProfile(command, listener);
+            default:
                 break;
         }
     }
@@ -184,6 +202,28 @@ public class RESTController {
         });
     }
 
+    private void getRecentUser(RESTCommands command, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put("userId", SharedPrefHelper.getUserModel(context)._id);
+        Call<List<UserModel>> call = service.getRecentUsers(hashMap);
+        call.enqueue(new Callback<List<UserModel>>() {
+            @Override
+            public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, null, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserModel>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
     private void getDirectMessages(RESTCommands command, MessageRequest messageRequest, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
         Call<List<MessageModel>> call = service.getDirectMessages(messageRequest);
@@ -208,17 +248,17 @@ public class RESTController {
         EngineService service = EngineClient.getClient().create(EngineService.class);
         JoinGroupRequest joinGroupRequest = new JoinGroupRequest();
         joinGroupRequest.userId = SharedPrefHelper.getUserModel(context)._id;
-        Call<List<GroupResponse>> call = service.getAllGroups(joinGroupRequest);
-        call.enqueue(new Callback<List<GroupResponse>>() {
+        Call<List<AllGroupResponse>> call = service.getAllGroups(joinGroupRequest);
+        call.enqueue(new Callback<List<AllGroupResponse>>() {
             @Override
-            public void onResponse(Call<List<GroupResponse>> call, Response<List<GroupResponse>> response) {
+            public void onResponse(Call<List<AllGroupResponse>> call, Response<List<AllGroupResponse>> response) {
                 if (listener != null) {
                     listener.onResponseReceived(command, new BaseData<>(null), response);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<GroupResponse>> call, Throwable t) {
+            public void onFailure(Call<List<AllGroupResponse>> call, Throwable t) {
                 if (listener != null) {
                     listener.onResponseFailed(command, new BaseData<>(null), t);
                 }
@@ -306,17 +346,81 @@ public class RESTController {
         });
     }
 
+    private void getAllPosts(RESTCommands command, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<List<SocialPostResponse>> call = service.getAllPosts();
+        call.enqueue(new Callback<List<SocialPostResponse>>() {
+            @Override
+            public void onResponse(Call<List<SocialPostResponse>> call, Response<List<SocialPostResponse>> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, null, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SocialPostResponse>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
+    private void updateUserProfile(RESTCommands command, SetupProfileRequest setupProfileRequest, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<ResponseBody> call = service.updateUserProfile(setupProfileRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, null, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
+    private void getUserProfile(RESTCommands command, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<UserModel> call = service.getUserProfile(SharedPrefHelper.getUserModel(context)._id);
+        call.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (listener != null) {
+                    listener.onResponseReceived(command, null, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
     public enum RESTCommands {
         REQ_POST_SIGN_UP_REQ,
         REQ_POST_LOG_IN_REQ,
         REQ_POST_OTP_VERIFY,
         REQ_GET_ALL_USERS,
+        REQ_GET_RECENT_USERS,
         REQ_GET_MESSAGES,
         REQ_GET_ALL_GROUPS,
         REQ_POST_JOIN_GROUP,
         REQ_GET_JOINED_GROUPS,
         REQ_GET_GROUP_MESSAGES,
-        REQ_POST_POST
+        REQ_POST_POST,
+        REQ_GET_ALL_POSTS,
+        REQ_PATCH_UPDATE_USER_PROFILE,
+        REQ_GET_USER_PROFILE
     }
 
     public interface OnResponseStatusListener {

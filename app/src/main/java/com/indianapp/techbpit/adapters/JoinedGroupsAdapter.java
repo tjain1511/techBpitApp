@@ -59,13 +59,16 @@ public class JoinedGroupsAdapter extends RecyclerView.Adapter<JoinedGroupsAdapte
             binding.cardView3.setVisibility(View.VISIBLE);
             binding.tvGrpName.setText(joinedGroups.get(position).groupName);
             String recentMsg = "You: ";
-            if (!joinedGroups.get(position).lastMessage.sender._id.equalsIgnoreCase(SharedPrefHelper.getUserModel(ctx)._id)) {
-                recentMsg = joinedGroups.get(position).lastMessage.sender.username + ": ";
+            if (joinedGroups.get(position).lastMessage != null && joinedGroups.get(position).lastMessage.sender != null) {
+                if (!joinedGroups.get(position).lastMessage.sender._id.equalsIgnoreCase(SharedPrefHelper.getUserModel(ctx)._id)) {
+                    recentMsg = joinedGroups.get(position).lastMessage.sender.username + ": ";
+                }
+                recentMsg += joinedGroups.get(position).lastMessage.message;
+                binding.tvRecentMsg.setText(recentMsg);
+                Date time = new Date(Long.valueOf(joinedGroups.get(position).lastMessage.timestamp));
+                binding.tvTime.setText(sfd.format(time));
             }
-            recentMsg += joinedGroups.get(position).lastMessage.message;
-            binding.tvRecentMsg.setText(recentMsg);
-            Date time = new Date(Long.valueOf(joinedGroups.get(position).lastMessage.timestamp));
-            binding.tvTime.setText(sfd.format(time));
+
             Picasso.get().load(joinedGroups.get(position).image).into(binding.circleImageView);
             binding.cl.setOnClickListener(v -> {
                 Intent intent = new Intent(ctx, ChatActivity.class);
