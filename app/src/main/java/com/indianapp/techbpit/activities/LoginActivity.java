@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
                 e.printStackTrace();
             }
         });
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
     }
 
     @Override

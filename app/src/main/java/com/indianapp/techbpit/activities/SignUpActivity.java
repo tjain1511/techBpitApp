@@ -1,10 +1,10 @@
 package com.indianapp.techbpit.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
@@ -14,8 +14,8 @@ import com.indianapp.techbpit.model.SignUpRequestModel;
 import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity implements RESTController.OnResponseStatusListener {
-    private ActivitySignUpBinding binding;
     SignUpRequestModel signUpRequestModel;
+    private ActivitySignUpBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
                 e.printStackTrace();
             }
         });
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
     }
 
     @Override

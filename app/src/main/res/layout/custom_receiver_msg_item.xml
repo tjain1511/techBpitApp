@@ -31,7 +31,6 @@
         android:background="@drawable/receiver_msg_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date"
         tools:visibility="gone">
 
         <TextView
@@ -80,7 +79,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date"
         tools:visibility="visible">
 
         <ImageView

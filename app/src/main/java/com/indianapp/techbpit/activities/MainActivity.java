@@ -21,18 +21,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         sharedPreferences = this.getSharedPreferences("com.indianapp.techbpit", MODE_PRIVATE);
         if (TextUtils.isEmpty(sharedPreferences.getString("my_email", ""))) {
-            binding.wholeLayout.setVisibility(View.VISIBLE);
+            binding.getRoot().setVisibility(View.VISIBLE);
         } else {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         }
-        binding.button3.setOnClickListener(v -> {
+        binding.tvSignup.setOnClickListener(v -> {
             Intent intent = new Intent(this, SignUpActivity.class);
             startActivity(intent);
             finish();
         });
-        binding.textView15.setOnClickListener(v -> {
+        binding.btnLogin.setOnClickListener(v -> {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();

@@ -7,8 +7,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="16dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,9 +34,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginVertical="8dp"
-                android:text="Group Name"
+                android:text="Android"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textFontWeight="600"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tv_grp_description"
@@ -44,17 +45,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="12dp"
-                android:text="A very long long long long group description a very long long long long group description a very long long long long group description a very long long long long group description"
+                android:text="Community for tech enthusiast and nerd head for mobile/All handy devices"
                 android:textAlignment="center"
-                android:textColor="#838383" />
+                android:textColor="#4A4A4A"
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/btn_join"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="48dp"
+                android:layout_marginVertical="16dp"
                 android:background="@drawable/bg_post_btn"
+                android:paddingVertical="4dp"
                 android:text="Join"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
             <ProgressBar
@@ -70,10 +76,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginVertical="5dp"
+                android:layout_marginBottom="12dp"
                 android:text="Joined By: 12 student(s)"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textFontWeight="500" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

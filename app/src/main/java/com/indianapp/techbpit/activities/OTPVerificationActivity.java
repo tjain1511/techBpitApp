@@ -1,16 +1,16 @@
 package com.indianapp.techbpit.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.indianapp.techbpit.ApiController.BaseData;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityOtpverificationBinding;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
-import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.model.UserModel;
 
 import retrofit2.Response;
@@ -24,8 +24,6 @@ public class OTPVerificationActivity extends AppCompatActivity implements RESTCo
         super.onCreate(savedInstanceState);
         binding = ActivityOtpverificationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        email = getIntent().getExtras().getString("email");
-        binding.otpDescriptionText.setText("Enter one time password sent on " + email);
         setOnClickListener();
     }
 
@@ -43,6 +41,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements RESTCo
             }
 
         });
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
     }
 
     @Override
