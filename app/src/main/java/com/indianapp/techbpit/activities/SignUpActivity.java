@@ -64,6 +64,16 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
             case REQ_POST_LOG_IN_REQ:
@@ -77,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

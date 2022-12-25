@@ -11,9 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
-import com.indianapp.techbpit.R;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.adapters.SectionPagerAdapter;
-import com.indianapp.techbpit.databinding.FragmentAllJoinedGroupsBinding;
 import com.indianapp.techbpit.databinding.FragmentChatsBinding;
 
 public class ChatsFragment extends Fragment {
@@ -61,5 +60,15 @@ public class ChatsFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(getActivity()).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

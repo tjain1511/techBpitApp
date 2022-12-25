@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,23 +21,39 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
+import com.indianapp.techbpit.MemberAddedListener;
+import com.indianapp.techbpit.MemberRemovedClickListener;
 import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.SocketClient;
+import com.indianapp.techbpit.UserClickedListener;
 import com.indianapp.techbpit.adapters.AllUserAdapter;
-import com.indianapp.techbpit.databinding.BottomSheetStartNewChatBinding;
+import com.indianapp.techbpit.adapters.TeamMembersAdapter;
+import com.indianapp.techbpit.databinding.BottomSheetAddTeamMembersBinding;
 import com.indianapp.techbpit.model.UserModel;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import io.socket.client.Socket;
 import retrofit2.Response;
 
-public class BottomSheetStartNewChat extends BottomSheetDialogFragment implements RESTController.OnResponseStatusListener {
-    private ArrayList<UserModel> allUsers = new ArrayList<>();
-    private AllUserAdapter adapter;
-    private BottomSheetStartNewChatBinding binding;
+public class BottomSheetAddTeamMembers extends BottomSheetDialogFragment implements RESTController.OnResponseStatusListener, UserClickedListener, MemberRemovedClickListener {
+    private ArrayList<UserModel> allUsers;
+    private SortedSet<UserModel> teamMembers = new TreeSet<UserModel>(new Comparator<UserModel>() {
+        @Override
+        public int compare(UserModel userModel1, UserModel userModel2) {
+            return userModel1.username.toLowerCase().compareTo(userModel2.username.toLowerCase());
+        }
+    });
+    private ArrayList<UserModel> addedMembers = new ArrayList<>();
+    private TeamMembersAdapter teamMembersAdapter;
+    private AllUserAdapter allUserAdapter;
+    private BottomSheetAddTeamMembersBinding binding;
     private SharedPreferences sharedPreferences;
     private Socket socket;
+    private MemberAddedListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,10 +63,17 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = BottomSheetStartNewChatBinding.inflate(inflater, container, false);
+        binding = BottomSheetAddTeamMembersBinding.inflate(inflater, container, false);
         sharedPreferences = getActivity().getSharedPreferences("com.indianapp.techbpit", MODE_PRIVATE);
-        initRecyclerView();
         return binding.getRoot();
+    }
+
+    public void setListener(MemberAddedListener listener) {
+        this.listener = listener;
+    }
+
+    public void setTeamMembers(SortedSet<UserModel> teamMembers) {
+        this.teamMembers = teamMembers;
     }
 
     @Override
@@ -62,16 +84,20 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         LinearLayout layout = binding.getRoot();
         layout.setMinimumHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+        initAddedUserRecyclerView();
 
         SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity())._id);
         socket = SocketClient.getSocket(getActivity());
-//        try {
-//            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_USERS, new BaseData<>(SharedPrefHelper.getUserModel(getActivity())), this);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_USERS, new BaseData<>(SharedPrefHelper.getUserModel(getActivity())), this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        binding.ivCancel.setOnClickListener(v -> dismiss());
+        binding.tvDone.setOnClickListener(v -> {
+            listener.onDoneClicked(teamMembers);
+            dismiss();
+        });
 
         binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -86,18 +112,7 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().length() >= 3) {
-                    try {
-                        RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_SEARCH_USERS, new BaseData<>(s.toString()), BottomSheetStartNewChat.this);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.i("khali_h", "kahli h");
-                    allUsers = new ArrayList<>();
-                    adapter.setAllUsers(allUsers);
-
-                }
+                filter(s.toString());
             }
         });
     }
@@ -114,13 +129,30 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
         } else {
             binding.tvNoResultsFound.setVisibility(View.GONE);
         }
-        adapter.setAllUsers(filteredList);
+        allUserAdapter.setAllUsers(filteredList);
     }
 
-    private void initRecyclerView() {
-        adapter = new AllUserAdapter(getActivity(), allUsers, sharedPreferences.getString("my_email", ""));
+    private void initAllUserRecyclerView() {
+        allUserAdapter = new AllUserAdapter(getActivity(), allUsers, sharedPreferences.getString("my_email", ""));
+        allUserAdapter.setListener(this);
         binding.rvAllUsers.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.rvAllUsers.setAdapter(adapter);
+        binding.rvAllUsers.setAdapter(allUserAdapter);
+
+    }
+
+    private void initAddedUserRecyclerView() {
+        getAddedMembers();
+        teamMembersAdapter = new TeamMembersAdapter(getActivity(), addedMembers);
+        teamMembersAdapter.setListener(this);
+        binding.rvAddedMembers.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvAddedMembers.setAdapter(teamMembersAdapter);
+    }
+
+    private void getAddedMembers() {
+        addedMembers.clear();
+        for (UserModel userModel : teamMembers) {
+            addedMembers.add(userModel);
+        }
 
     }
 
@@ -129,14 +161,8 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
         switch (commands) {
             case REQ_GET_ALL_USERS:
                 if (response.isSuccessful()) {
-                    allUsers.addAll((ArrayList<UserModel>) response.body());
-                    initRecyclerView();
-                }
-            case REQ_GET_SEARCH_USERS:
-                if (response.isSuccessful() && binding.edtSearch.getText().length() > 0) {
-                    allUsers.clear();
-                    allUsers.addAll((ArrayList<UserModel>) response.body());
-                    adapter.setAllUsers(allUsers);
+                    allUsers = (ArrayList<UserModel>) response.body();
+                    initAllUserRecyclerView();
                 }
         }
     }
@@ -147,5 +173,20 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
             case REQ_GET_ALL_USERS:
                 Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onUserClicked(int position, UserModel userModel) {
+        teamMembers.add(userModel);
+        getAddedMembers();
+        teamMembersAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRemovedClick(UserModel userModel) {
+        teamMembers.remove(userModel);
+        getAddedMembers();
+        teamMembersAdapter.notifyDataSetChanged();
+
     }
 }

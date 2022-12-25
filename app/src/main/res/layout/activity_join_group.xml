@@ -35,11 +35,14 @@
 
             <Button
                 android:id="@+id/btn_go_to_groups"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="64dp"
+                android:background="@drawable/bg_post_btn"
                 android:text="GO to group chat"
-                android:visibility="gone" />
+                android:textColor="@color/white"
+                android:visibility="visible" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

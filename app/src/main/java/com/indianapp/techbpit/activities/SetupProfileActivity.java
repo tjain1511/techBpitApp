@@ -65,18 +65,40 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private SetupProfileRequestItem createProfileData() {
         SetupProfileRequestItem setupProfileRequestItem = new SetupProfileRequestItem();
 //        setupProfileRequestItem.id = SharedPrefHelper.getUserModel(this)._id;
-        setupProfileRequestItem.username = String.valueOf(binding.edtFullName.getText());
-        setupProfileRequestItem.about = String.valueOf(binding.edtAbout.getText());
-        setupProfileRequestItem.state = String.valueOf(binding.edtState.getText());
-        setupProfileRequestItem.city = String.valueOf(binding.edtCity.getText());
-        setupProfileRequestItem.skills = createSkillsList();
+        if (!TextUtils.isEmpty(binding.edtFullName.getText())) {
+            setupProfileRequestItem.username = String.valueOf(binding.edtFullName.getText());
+        }
+        if (!TextUtils.isEmpty(binding.edtAbout.getText())) {
+            setupProfileRequestItem.about = String.valueOf(binding.edtAbout.getText());
+        }
+        if (!TextUtils.isEmpty(binding.edtState.getText())) {
+            setupProfileRequestItem.state = String.valueOf(binding.edtState.getText());
+        }
+        if (!TextUtils.isEmpty(binding.edtCity.getText())) {
+            setupProfileRequestItem.city = String.valueOf(binding.edtCity.getText());
+        }
+        if (!createSkillsList().isEmpty()) {
+            setupProfileRequestItem.skills = createSkillsList();
+        }
         if (yearOfStudy != 0) {
             setupProfileRequestItem.yearOfStudy = binding.spnrSelectYear.getSelectedItem().toString();
         }
-        setupProfileRequestItem.socialLinks = createSocialPlatform();
+        if (!createSocialPlatform().isEmpty()) {
+            setupProfileRequestItem.socialLinks = createSocialPlatform();
+        }
         setupProfileRequestItem.image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNzU1Ajo-RClF42aO2dvjvDRFcjPtvNuPUwTU92WutY5sB_8xV4vLcdoqEjn2vtd-_-MA&usqp=CAU";
         return setupProfileRequestItem;
     }
@@ -121,7 +143,7 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
         String skills[] = skillsString.split(",");
         ArrayList<String> skillsList = new ArrayList<>();
         for (int i = 0; i < skills.length; i++) {
-            if (!TextUtils.isEmpty(skills[i]))
+            if (!TextUtils.isEmpty(skills[i].trim()))
                 skillsList.add(skills[i].trim());
         }
         return skillsList;

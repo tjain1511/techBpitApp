@@ -17,6 +17,12 @@ public class SharedPrefHelper {
         getSharedPref(context).edit().putString("my_email", userModel.email).apply();
         getSharedPref(context).edit().putString("my_username", userModel.username).apply();
         getSharedPref(context).edit().putString("my_image", userModel.imageUrl).apply();
+        getSharedPref(context).edit().putString("my_access_token", userModel.access_token).apply();
+        getSharedPref(context).edit().putString("my_refresh_token", userModel.refresh_token).apply();
+    }
+
+    public static void setAccessToken(Context context, String access_token) {
+        getSharedPref(context).edit().putString("my_access_token", access_token).apply();
     }
 
     public static UserModel getUserModel(Context context) {
@@ -25,6 +31,8 @@ public class SharedPrefHelper {
         userModel.email = getSharedPref(context).getString("my_email", null);
         userModel.username = getSharedPref(context).getString("my_username", null);
         userModel.imageUrl = getSharedPref(context).getString("my_image", null);
+        userModel.access_token = getSharedPref(context).getString("my_access_token", null);
+        userModel.refresh_token = getSharedPref(context).getString("my_refresh_token", null);
         return userModel;
     }
 }

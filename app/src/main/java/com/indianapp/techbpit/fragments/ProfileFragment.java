@@ -1,5 +1,6 @@
 package com.indianapp.techbpit.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,12 @@ import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
+import com.indianapp.techbpit.activities.AddProjectActivity;
+import com.indianapp.techbpit.adapters.ProjectsAdapter;
 import com.indianapp.techbpit.adapters.SkillAdapter;
 import com.indianapp.techbpit.adapters.SocialLinksAdapter;
 import com.indianapp.techbpit.databinding.FragmentProfileBinding;
+import com.indianapp.techbpit.model.ProjectResponse;
 import com.indianapp.techbpit.model.SocialPlatform;
 import com.indianapp.techbpit.model.UserModel;
 import com.squareup.picasso.Picasso;
@@ -28,6 +32,7 @@ public class ProfileFragment extends Fragment implements RESTController.OnRespon
     private FragmentProfileBinding binding;
     private ArrayList<String> skillsList = new ArrayList<>();
     private ArrayList<SocialPlatform> socialList = new ArrayList<>();
+    private ArrayList<ProjectResponse> projectsList = new ArrayList<>();
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -46,13 +51,26 @@ public class ProfileFragment extends Fragment implements RESTController.OnRespon
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         intiSkillsRecyclerView();
         initSocialLinksRecyclerView();
-        binding.getRoot().setVisibility(View.GONE);
+        binding.ivAddProject.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddProjectActivity.class);
+            startActivity(intent);
+        });
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        binding.llProfileContent.setVisibility(View.GONE);
+        binding.pbProfile.setVisibility(View.VISIBLE);
+
         try {
+            RESTController.getInstance(getActivity()).clearPendingApis();
             RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_USER_PROFILE, null, this);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return binding.getRoot();
     }
 
     private void intiSkillsRecyclerView() {
@@ -63,6 +81,13 @@ public class ProfileFragment extends Fragment implements RESTController.OnRespon
         layoutManager.setJustifyContent(JustifyContent.FLEX_START);
         binding.rvSkill.setLayoutManager(layoutManager);
         binding.rvSkill.setAdapter(skillAdapter);
+    }
+
+    private void initProjectsRecyclerView() {
+        ProjectsAdapter projectsAdapter = new ProjectsAdapter(projectsList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        binding.rvProjects.setLayoutManager(layoutManager);
+        binding.rvProjects.setAdapter(projectsAdapter);
     }
 
     private void initSocialLinksRecyclerView() {
@@ -110,15 +135,18 @@ public class ProfileFragment extends Fragment implements RESTController.OnRespon
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> data, Response<?> response) {
         if (response.isSuccessful()) {
             UserModel userModel = (UserModel) response.body();
-            binding.getRoot().setVisibility(View.VISIBLE);
+            binding.llProfileContent.setVisibility(View.VISIBLE);
+            binding.pbProfile.setVisibility(View.GONE);
             skillsList = (ArrayList<String>) userModel.skills;
             socialList = (ArrayList<SocialPlatform>) userModel.socialLinks;
+            projectsList = (ArrayList<ProjectResponse>) userModel.projects;
             binding.tvUserName.setText(userModel.username);
             binding.tvLocation.setText(userModel.city + ", " + userModel.state);
             binding.tvAbt.setText(userModel.about);
             Picasso.get().load(userModel.imageUrl).into(binding.ivProfilePicture);
             initSocialLinksRecyclerView();
             intiSkillsRecyclerView();
+            initProjectsRecyclerView();
         }
     }
 

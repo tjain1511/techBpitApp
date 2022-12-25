@@ -26,6 +26,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.ivCreatePost.setVisibility(View.VISIBLE);
+        binding.ivChat.setVisibility(View.VISIBLE);
+        binding.ivEditProfile.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainer.getId(), new HomeFragment()).commit();
         binding.bubbleTabBar.addBubbleListener(new OnBubbleClickListener() {
             @Override
@@ -34,19 +37,29 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.home:
                         binding.tvFragName.setText("HOME FEED");
                         fragment = new HomeFragment();
+                        binding.ivCreatePost.setVisibility(View.VISIBLE);
+                        binding.ivChat.setVisibility(View.VISIBLE);
+                        binding.ivEditProfile.setVisibility(View.GONE);
                         break;
                     case R.id.chats:
                         binding.tvFragName.setText("CHATS");
                         fragment = new ChatsFragment();
+                        binding.ivCreatePost.setVisibility(View.VISIBLE);
+                        binding.ivChat.setVisibility(View.VISIBLE);
+                        binding.ivEditProfile.setVisibility(View.GONE);
                         break;
                     case R.id.explore:
                         binding.tvFragName.setText("EXPLORE");
                         fragment = new ExploreFragment();
+                        binding.ivCreatePost.setVisibility(View.VISIBLE);
+                        binding.ivChat.setVisibility(View.VISIBLE);
+                        binding.ivEditProfile.setVisibility(View.GONE);
                         break;
                     case R.id.profile:
                         binding.tvFragName.setText("PROFILE");
                         binding.ivCreatePost.setVisibility(View.GONE);
                         binding.ivChat.setVisibility(View.GONE);
+                        binding.ivEditProfile.setVisibility(View.VISIBLE);
                         fragment = new ProfileFragment();
                         break;
                     default:

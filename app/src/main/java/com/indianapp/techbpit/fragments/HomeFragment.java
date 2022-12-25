@@ -41,17 +41,13 @@ public class HomeFragment extends Fragment implements RESTController.OnResponseS
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        try {
-            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_POSTS, null, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         try {
+            RESTController.getInstance(getActivity()).clearPendingApis();
             RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_POSTS, null, this);
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,6 +69,7 @@ public class HomeFragment extends Fragment implements RESTController.OnResponseS
             binding.pbPosts.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> data, Throwable t) {

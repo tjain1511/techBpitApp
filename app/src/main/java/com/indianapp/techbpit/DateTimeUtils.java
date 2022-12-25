@@ -54,6 +54,11 @@ public class DateTimeUtils {
         return newFormat.format(new Date(dateTime));
     }
 
+    public static String getFormattedDate(Long dateTime) {
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd MMM YY");
+        return newFormat.format(new Date(dateTime));
+    }
+
     public static String getDateFromFormattedDate(String args) {
 
         try {

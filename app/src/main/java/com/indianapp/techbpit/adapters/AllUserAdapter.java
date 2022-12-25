@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.UserClickedListener;
 import com.indianapp.techbpit.activities.ChatActivity;
 import com.indianapp.techbpit.databinding.ItemAllUserBinding;
 import com.indianapp.techbpit.model.UserModel;
@@ -22,9 +23,10 @@ import java.util.Date;
 import java.util.Locale;
 
 public class AllUserAdapter extends RecyclerView.Adapter<AllUserAdapter.UserViewHolder> {
-    Context ctx;
-    String myEmail;
+    private Context ctx;
+    private String myEmail;
     private ArrayList<UserModel> allUsers;
+    private UserClickedListener listener;
 
     public AllUserAdapter(Context ctx, ArrayList<UserModel> allUsers, String myEmail) {
         this.allUsers = allUsers;
@@ -35,6 +37,10 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserAdapter.UserView
     public void setAllUsers(ArrayList<UserModel> allUsers) {
         this.allUsers = allUsers;
         notifyDataSetChanged();
+    }
+
+    public void setListener(UserClickedListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -79,11 +85,15 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserAdapter.UserView
                 }
                 Picasso.get().load(allUsers.get(position).imageUrl).into(binding.circleImageView);
                 binding.cl.setOnClickListener(v -> {
-                    Intent intent = new Intent(ctx, ChatActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("current_user", allUsers.get(position));
-                    intent.putExtra("current_user", allUsers.get(position));
-                    ctx.startActivity(intent);
+                    if (listener == null) {
+                        Intent intent = new Intent(ctx, ChatActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("current_user", allUsers.get(position));
+                        intent.putExtra("current_user", allUsers.get(position));
+                        ctx.startActivity(intent);
+                    } else {
+                        listener.onUserClicked(position, allUsers.get(position));
+                    }
                 });
             } else {
                 binding.cardView3.setVisibility(View.GONE);

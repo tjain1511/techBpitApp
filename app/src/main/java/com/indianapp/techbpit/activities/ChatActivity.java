@@ -70,18 +70,18 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     private static final int ATTACHMENT_CHOICE_CHOOSE_IMAGE = 0x1001;
     private long last_text_edit = 0;
     private Socket socket;
-    private ArrayList<MessageModel> messages = new ArrayList<>();
+    private final ArrayList<MessageModel> messages = new ArrayList<>();
     private ActivityMainBinding binding;
     private ChatAdapter adapter;
     private UserModel receiverUser;
     private UserModel mySelf;
-    private Map config = new HashMap();
+    private final Map config = new HashMap();
     private String groupId;
     private Uri filePath;
     private boolean isGrpChat;
     private String messageEvent;
     private String typingEvent;
-    private Emitter.Listener onNewMessage = new Emitter.Listener() {
+    private final Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -97,7 +97,7 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             });
         }
     };
-    private Emitter.Listener isTyping = new Emitter.Listener() {
+    private final Emitter.Listener isTyping = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             runOnUiThread(new Runnable() {
@@ -120,8 +120,8 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             });
         }
     };
-    private Handler handler = new Handler();
-    private Runnable input_finish_checker = new Runnable() {
+    private final Handler handler = new Handler();
+    private final Runnable input_finish_checker = new Runnable() {
         public void run() {
             if (System.currentTimeMillis() > (last_text_edit + DELAY - 500)) {
                 String receiverId;
@@ -142,6 +142,11 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     @Override
     protected void onResume() {
         super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SocketClient.setUserId(mySelf._id);
         socket = SocketClient.getSocket(this);
         socket.emit("join-room", groupId);

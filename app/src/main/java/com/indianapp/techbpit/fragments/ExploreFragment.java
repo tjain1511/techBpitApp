@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.R;
 
 /**
@@ -62,5 +63,14 @@ public class ExploreFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_explore, container, false);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(getActivity()).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

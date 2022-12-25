@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
+import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetStartNewChat;
 import com.indianapp.techbpit.adapters.SectionPagerAdapter;
 import com.indianapp.techbpit.databinding.ActivityAllChatsBinding;
@@ -25,7 +26,16 @@ public class AllChatsActivity extends AppCompatActivity {
             BottomSheetStartNewChat bottomSheetStartNewChat = new BottomSheetStartNewChat();
             bottomSheetStartNewChat.show(getSupportFragmentManager(), "BottomSheetStartNewChat");
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -45,7 +45,12 @@ public class UserModel implements Serializable {
 
     public List<SocialPlatform> socialLinks;
 
+    public List<ProjectResponse> projects;
+
     public List<String> skills;
 
+    public String access_token;
+
+    public String refresh_token;
 
 }

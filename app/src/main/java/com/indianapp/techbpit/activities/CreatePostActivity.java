@@ -268,6 +268,16 @@ public class CreatePostActivity extends AppCompatActivity implements RESTControl
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_CODE) {

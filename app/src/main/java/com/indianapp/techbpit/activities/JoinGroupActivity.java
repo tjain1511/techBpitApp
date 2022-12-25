@@ -13,7 +13,6 @@ import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.AllGroupsAdapter;
 import com.indianapp.techbpit.databinding.ActivityJoinGroupBinding;
 import com.indianapp.techbpit.model.AllGroupResponse;
-import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
 
 import java.util.ArrayList;
@@ -49,6 +48,16 @@ public class JoinGroupActivity extends AppCompatActivity implements RESTControll
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.rvGroups.setLayoutManager(linearLayoutManager);
         adapter.setListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

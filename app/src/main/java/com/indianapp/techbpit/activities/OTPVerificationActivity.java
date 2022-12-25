@@ -24,6 +24,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements RESTCo
         super.onCreate(savedInstanceState);
         binding = ActivityOtpverificationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        email = getIntent().getStringExtra("email");
         setOnClickListener();
     }
 

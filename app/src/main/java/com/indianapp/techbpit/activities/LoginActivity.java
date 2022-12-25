@@ -29,16 +29,21 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
 
     private void setOnClickListener() {
         binding.button3.setOnClickListener(v -> {
-            Toast.makeText(this, "Logging in...", Toast.LENGTH_SHORT).show();
-            binding.button3.setEnabled(false);
-            SignUpRequestModel signUpRequestModel = new SignUpRequestModel();
-            signUpRequestModel.email = String.valueOf(binding.editTextTextEmailAddress2.getText());
-            signUpRequestModel.password = String.valueOf(binding.editTextTextPassword2.getText());
-            BaseData<SignUpRequestModel> baseData = new BaseData<>(signUpRequestModel);
-            try {
-                RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_POST_LOG_IN_REQ, baseData, this);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(binding.editTextTextEmailAddress2.getText()).matches()) {
+                Toast.makeText(this, "Enter valid email", Toast.LENGTH_SHORT).show();
+                binding.editTextTextEmailAddress2.setError("Enter valid email");
+            } else {
+                Toast.makeText(this, "Logging in...", Toast.LENGTH_SHORT).show();
+                binding.button3.setEnabled(false);
+                SignUpRequestModel signUpRequestModel = new SignUpRequestModel();
+                signUpRequestModel.email = String.valueOf(binding.editTextTextEmailAddress2.getText());
+                signUpRequestModel.password = String.valueOf(binding.editTextTextPassword2.getText());
+                BaseData<SignUpRequestModel> baseData = new BaseData<>(signUpRequestModel);
+                try {
+                    RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_POST_LOG_IN_REQ, baseData, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         binding.ivBack.setOnClickListener(v -> onBackPressed());
@@ -64,6 +69,16 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            RESTController.getInstance(this).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
             case REQ_POST_LOG_IN_REQ:
@@ -76,6 +91,8 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        overridePendingTransition(0, 0);
         startActivity(intent);
         finish();
     }
