@@ -68,19 +68,13 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
     private static final int REQUEST_FILE_DOCUMENT = 0x001;
     private static final long DELAY = 1000;
     private static final int ATTACHMENT_CHOICE_CHOOSE_IMAGE = 0x1001;
+    private final ArrayList<MessageModel> messages = new ArrayList<>();
+    private final Map config = new HashMap();
+    private final Handler handler = new Handler();
     private long last_text_edit = 0;
     private Socket socket;
-    private final ArrayList<MessageModel> messages = new ArrayList<>();
     private ActivityMainBinding binding;
     private ChatAdapter adapter;
-    private UserModel receiverUser;
-    private UserModel mySelf;
-    private final Map config = new HashMap();
-    private String groupId;
-    private Uri filePath;
-    private boolean isGrpChat;
-    private String messageEvent;
-    private String typingEvent;
     private final Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -97,6 +91,11 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             });
         }
     };
+    private UserModel receiverUser;
+    private UserModel mySelf;
+    private String groupId;
+    private Uri filePath;
+    private boolean isGrpChat;
     private final Emitter.Listener isTyping = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -120,7 +119,6 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             });
         }
     };
-    private final Handler handler = new Handler();
     private final Runnable input_finish_checker = new Runnable() {
         public void run() {
             if (System.currentTimeMillis() > (last_text_edit + DELAY - 500)) {
@@ -138,6 +136,8 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
             }
         }
     };
+    private String messageEvent;
+    private String typingEvent;
 
     @Override
     protected void onResume() {
@@ -181,6 +181,17 @@ public class ChatActivity extends AppCompatActivity implements RESTController.On
         configCloudinary();
         setOnClickListener();
         initRecyclerView();
+        binding.clHeader.setOnClickListener(v -> {
+            if (isGrpChat) {
+                Intent intent = new Intent(this, GroupDetailActivity.class);
+                intent.putExtra("group_id", groupId);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, ThirdPersonProfileActivity.class);
+                intent.putExtra("third_person", receiverUser);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupIsGrpChat() {

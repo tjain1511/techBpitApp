@@ -121,7 +121,6 @@ public class BottomSheetStartNewChat extends BottomSheetDialogFragment implement
         adapter = new AllUserAdapter(getActivity(), allUsers, sharedPreferences.getString("my_email", ""));
         binding.rvAllUsers.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.rvAllUsers.setAdapter(adapter);
-
     }
 
     @Override

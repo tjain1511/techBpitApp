@@ -8,9 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetPostType;
+import com.indianapp.techbpit.EditProfileClickListener;
 import com.indianapp.techbpit.R;
 import com.indianapp.techbpit.databinding.ActivityHomeBinding;
-import com.indianapp.techbpit.fragments.ChatsFragment;
+import com.indianapp.techbpit.fragments.CommunityFragment;
 import com.indianapp.techbpit.fragments.ExploreFragment;
 import com.indianapp.techbpit.fragments.HomeFragment;
 import com.indianapp.techbpit.fragments.ProfileFragment;
@@ -20,6 +21,7 @@ import io.ak1.OnBubbleClickListener;
 public class HomeActivity extends AppCompatActivity {
     private static Fragment fragment = null;
     private ActivityHomeBinding binding;
+    private EditProfileClickListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,8 @@ public class HomeActivity extends AppCompatActivity {
                         binding.ivEditProfile.setVisibility(View.GONE);
                         break;
                     case R.id.chats:
-                        binding.tvFragName.setText("CHATS");
-                        fragment = new ChatsFragment();
+                        binding.tvFragName.setText("COMMUNITIES");
+                        fragment = new CommunityFragment();
                         binding.ivCreatePost.setVisibility(View.VISIBLE);
                         binding.ivChat.setVisibility(View.VISIBLE);
                         binding.ivEditProfile.setVisibility(View.GONE);
@@ -81,8 +83,11 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         binding.ivEditProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SetupProfileActivity.class);
-            startActivity(intent);
+           listener.onEditProfileClicked();
         });
+    }
+
+    public void setProfileEditListener(EditProfileClickListener listener){
+        this.listener = listener;
     }
 }

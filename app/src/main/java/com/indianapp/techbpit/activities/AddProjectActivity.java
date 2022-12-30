@@ -22,7 +22,9 @@ import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.TeamMembersAdapter;
 import com.indianapp.techbpit.databinding.ActivityAddProjectBinding;
 import com.indianapp.techbpit.model.ProjectRequest;
+import com.indianapp.techbpit.model.ProjectResponse;
 import com.indianapp.techbpit.model.UserModel;
+import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
@@ -44,25 +46,46 @@ public class AddProjectActivity extends AppCompatActivity implements RESTControl
         }
     });
 
+    private ProjectResponse project;
+    private boolean isEditFlow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAddProjectBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        teamMembers.add(SharedPrefHelper.getUserModel(this));
-        setupTeamMembersUI();
-        binding.tvStartDate.setOnClickListener(v -> setupDatePickerDialog(binding.tvStartDate));
-        binding.tvEndDate.setOnClickListener(v -> setupDatePickerDialog(binding.tvEndDate));
+        getIntentData();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.btnPost.setOnClickListener(v -> postProject());
-        binding.ivAddMember.setOnClickListener(v -> {
-            BottomSheetAddTeamMembers bottomSheetAddTeamMembers = new BottomSheetAddTeamMembers();
-            bottomSheetAddTeamMembers.setListener(this);
-            bottomSheetAddTeamMembers.setTeamMembers(teamMembersSet);
-            bottomSheetAddTeamMembers.show(getSupportFragmentManager(), "BottomSheetStartNewChat");
+        if (!isEditFlow) {
+            teamMembers.add(SharedPrefHelper.getUserModel(this));
+            setupTeamMembersUI();
+            binding.tvStartDate.setOnClickListener(v -> setupDatePickerDialog(binding.tvStartDate));
+            binding.tvEndDate.setOnClickListener(v -> setupDatePickerDialog(binding.tvEndDate));
+            binding.btnPost.setOnClickListener(v -> postProject());
+            binding.ivAddMember.setOnClickListener(v -> {
+                BottomSheetAddTeamMembers bottomSheetAddTeamMembers = new BottomSheetAddTeamMembers();
+                bottomSheetAddTeamMembers.setListener(this);
+                bottomSheetAddTeamMembers.setTeamMembers(teamMembersSet);
+                bottomSheetAddTeamMembers.show(getSupportFragmentManager(), "BottomSheetStartNewChat");
 
-        });
+            });
+        } else {
+            binding.tvHeading.setText("Edit Project");
+            binding.btnPost.setOnClickListener(v -> updateProject());
+            prefillData();
+        }
     }
+
+    private void getIntentData() {
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("project_data")) {
+            project = (ProjectResponse) getIntent().getSerializableExtra("project_data");
+        }
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("project_data")) {
+            isEditFlow = getIntent().getBooleanExtra("project_edit", false);
+        }
+
+    }
+
 
     private void setupTeamMembersUI() {
         adapter = new TeamMembersAdapter(this, teamMembers);
@@ -79,12 +102,49 @@ public class AddProjectActivity extends AppCompatActivity implements RESTControl
         adapter.notifyDataSetChanged();
     }
 
-    private void postProject() {
-        try {
-            RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_POST_USER_PROJECTS, new BaseData<>(createProjectData()), this);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private boolean validate() {
+        boolean valid = true;
+        if (TextUtils.isEmpty(binding.edtTitle.getText())) {
+            binding.edtTitle.setError("Enter Title");
+            valid = false;
         }
+        if (TextUtils.isEmpty(binding.edtDescription.getText())) {
+            binding.edtDescription.setError("Enter Description");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(binding.edtGitLink.getText())) {
+            binding.edtGitLink.setError("Enter Git Link");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(binding.edtProjectLink.getText())) {
+            binding.edtProjectLink.setError("Enter Project Link");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(binding.tvStartDate.getText())) {
+            binding.tvStartDate.setError("Enter Start Date");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(binding.tvEndDate.getText())) {
+            binding.tvEndDate.setError("Enter End Date");
+            valid = false;
+        }
+        return valid;
+    }
+
+    private void postProject() {
+        if (validate()) {
+            binding.btnPost.setEnabled(false);
+            binding.btnPost.setText("Saving ...");
+            try {
+                RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_POST_USER_PROJECTS, new BaseData<>(createProjectData()), this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateProject() {
+
     }
 
     @Override
@@ -95,6 +155,21 @@ public class AddProjectActivity extends AppCompatActivity implements RESTControl
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void prefillData() {
+        Picasso.get().load(project.image).into(binding.ivProjectImage);
+        binding.edtTitle.setText(project.title);
+        binding.edtDescription.setText(project.description);
+        binding.edtGitLink.setText(project.gitLink);
+        binding.edtProjectLink.setText(project.hostedLink);
+        if (!TextUtils.isEmpty(project.duration)) {
+            String dates[] = project.duration.split(" - ");
+            binding.tvStartDate.setText(dates[0]);
+            binding.tvEndDate.setText(dates[1]);
+        }
+
     }
 
     private ProjectRequest createProjectData() {
@@ -152,13 +227,19 @@ public class AddProjectActivity extends AppCompatActivity implements RESTControl
         if (commands == RESTController.RESTCommands.REQ_POST_USER_PROJECTS) {
             if (response.isSuccessful()) {
                 onBackPressed();
+            } else {
+                binding.btnPost.setEnabled(true);
+                binding.btnPost.setText("SAVE");
             }
         }
     }
 
     @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> data, Throwable t) {
-
+        if (commands == RESTController.RESTCommands.REQ_POST_USER_PROJECTS) {
+            binding.btnPost.setEnabled(true);
+            binding.btnPost.setText("SAVE");
+        }
     }
 
     @Override

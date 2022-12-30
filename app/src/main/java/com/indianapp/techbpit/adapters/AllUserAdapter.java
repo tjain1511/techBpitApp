@@ -98,6 +98,9 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserAdapter.UserView
             } else {
                 binding.cardView3.setVisibility(View.GONE);
             }
+            if (allUsers.size() - 1 == position) {
+                binding.ivLineBreak.setVisibility(View.GONE);
+            }
         }
     }
 }

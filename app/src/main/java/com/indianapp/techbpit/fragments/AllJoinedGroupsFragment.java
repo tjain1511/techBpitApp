@@ -44,8 +44,15 @@ public class AllJoinedGroupsFragment extends Fragment implements RESTController.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         UserModel userModel = new UserModel();
         userModel.email = SharedPrefHelper.getUserModel(getActivity()).email;
+
         try {
             RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_JOINED_GROUPS, new BaseData<>(userModel), this);
         } catch (Exception e) {
@@ -65,6 +72,7 @@ public class AllJoinedGroupsFragment extends Fragment implements RESTController.
     @Override
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         UserModel userModel = (UserModel) response.body();
+        joinedGroups.clear();
         joinedGroups.addAll(userModel.groupsJoined);
         adapter.notifyDataSetChanged();
     }

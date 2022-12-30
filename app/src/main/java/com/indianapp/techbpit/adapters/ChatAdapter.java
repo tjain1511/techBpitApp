@@ -177,8 +177,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private void onBind(int position) {
             if (!TextUtils.isEmpty(messages.get(position).date)) {
-                binding.date.setText(messages.get(position).date);
                 binding.date.setVisibility(View.VISIBLE);
+                if (messages.get(position).date.equalsIgnoreCase(sfd.format(new Date(System.currentTimeMillis())))) {
+                    binding.date.setText("Today");
+                } else if (messages.get(position).date.equalsIgnoreCase(sfd.format(new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24)))) {
+                    binding.date.setText("Yesterday");
+                } else {
+                    binding.date.setText(messages.get(position).date);
+
+                }
             } else {
                 binding.date.setVisibility(View.GONE);
             }

@@ -1,74 +1,101 @@
 package com.indianapp.techbpit.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
-import com.indianapp.techbpit.R;
+import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.adapters.AllGroupsAdapter;
+import com.indianapp.techbpit.databinding.FragmentExploreBinding;
+import com.indianapp.techbpit.model.AllGroupResponse;
+import com.indianapp.techbpit.model.JoinGroupRequest;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ExploreFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ExploreFragment extends Fragment {
+import java.util.ArrayList;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import retrofit2.Response;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class ExploreFragment extends Fragment implements RESTController.OnResponseStatusListener, AllGroupsAdapter.JoinListener {
+    private FragmentExploreBinding binding;
+    private ArrayList<AllGroupResponse> groupsList = new ArrayList<>();
+    private AllGroupsAdapter adapter;
 
-    public ExploreFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ExploreFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ExploreFragment newInstance(String param1, String param2) {
-        ExploreFragment fragment = new ExploreFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_explore, container, false);
+        binding = FragmentExploreBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
+
+    private void initRecyclerView() {
+        adapter = new AllGroupsAdapter(groupsList);
+        binding.rvGroups.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        binding.rvGroups.setLayoutManager(linearLayoutManager);
+        adapter.setListener(this);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         try {
             RESTController.getInstance(getActivity()).clearPendingApis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        initRecyclerView();
+        try {
+            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_GROUPS, null, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
+        switch (commands) {
+            case REQ_POST_JOIN_GROUP:
+                if (response.isSuccessful()) {
+                    int position = ((JoinGroupRequest) request.getBaseData()).position;
+                    groupsList.get(position).isJoined = true;
+                    adapter.notifyDataSetChanged();
+                }
+                break;
+            case REQ_GET_ALL_GROUPS:
+                if (response.isSuccessful()) {
+                    groupsList.addAll((ArrayList<AllGroupResponse>) response.body());
+                    adapter.notifyDataSetChanged();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> data, Throwable t) {
+
+    }
+
+    @Override
+    public void onJoinClicked(String groupId, int position) {
+        JoinGroupRequest joinGroupRequest = new JoinGroupRequest();
+        joinGroupRequest.groupId = groupId;
+        joinGroupRequest.userId = SharedPrefHelper.getUserModel(getActivity())._id;
+        joinGroupRequest.position = position;
+        try {
+            RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_POST_JOIN_GROUP, new BaseData<>(joinGroupRequest), this);
         } catch (Exception e) {
             e.printStackTrace();
         }

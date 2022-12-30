@@ -2,12 +2,12 @@ package com.indianapp.techbpit.ApiController;
 
 import com.indianapp.techbpit.model.AllGroupResponse;
 import com.indianapp.techbpit.model.GroupMessageRequest;
+import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
 import com.indianapp.techbpit.model.MessageModel;
 import com.indianapp.techbpit.model.MessageRequest;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
 import com.indianapp.techbpit.model.ProjectRequest;
-import com.indianapp.techbpit.model.ProjectResponse;
 import com.indianapp.techbpit.model.RefreshTokenRequest;
 import com.indianapp.techbpit.model.SetupProfileRequest;
 import com.indianapp.techbpit.model.SignUpRequestModel;
@@ -79,4 +79,10 @@ public interface EngineService {
 
     @GET("/searchUser")
     Call<List<UserModel>> getSearchedUsers(@Query("search") String search);
+
+    @GET("/group/{groupId}")
+    Call<GroupResponse> getGroupData(@Header("Authorization") String authorization, @Path("groupId") String groupId);
+
+    @PATCH("/group/leave/{groupId}")
+    Call<ResponseBody> leaveGroup(@Header("Authorization") String authorization, @Path("groupId") String groupId);
 }

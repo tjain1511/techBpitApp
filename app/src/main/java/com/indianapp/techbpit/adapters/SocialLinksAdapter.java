@@ -1,7 +1,9 @@
 package com.indianapp.techbpit.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -48,9 +50,14 @@ public class SocialLinksAdapter extends RecyclerView.Adapter<SocialLinksAdapter.
         }
 
         private void onBind(int position) {
-            binding.tvPlatformLink.setText(socialLinks.get(position).platformLink);
+
+            if (!TextUtils.isEmpty(socialLinks.get(position).platformLink)) {
+                binding.tvPlatformLink.setText(socialLinks.get(position).platformLink);
+                binding.getRoot().setVisibility(View.VISIBLE);
+            } else {
+                binding.getRoot().setVisibility(View.GONE);
+            }
             Glide.with(context).load(socialLinks.get(position).platformImg).placeholder(R.drawable.img_5).into(binding.ivPlatformImage);
-//            Picasso.get().load(socialLinks.get(position).platformLink).into(binding.ivPlatformImage);
         }
     }
 }

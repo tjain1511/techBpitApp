@@ -2,6 +2,7 @@ package com.indianapp.techbpit.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,12 +30,8 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
 
     private void setOnClickListener() {
         binding.button3.setOnClickListener(v -> {
-            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(binding.editTextTextEmailAddress2.getText()).matches()) {
-                Toast.makeText(this, "Enter valid email", Toast.LENGTH_SHORT).show();
-                binding.editTextTextEmailAddress2.setError("Enter valid email");
-            } else {
-                Toast.makeText(this, "Logging in...", Toast.LENGTH_SHORT).show();
-                binding.button3.setEnabled(false);
+            if (validate()) {
+                binding.button3.setText("Logging in...");
                 SignUpRequestModel signUpRequestModel = new SignUpRequestModel();
                 signUpRequestModel.email = String.valueOf(binding.editTextTextEmailAddress2.getText());
                 signUpRequestModel.password = String.valueOf(binding.editTextTextPassword2.getText());
@@ -47,6 +44,19 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
             }
         });
         binding.ivBack.setOnClickListener(v -> onBackPressed());
+    }
+
+    private boolean validate() {
+        boolean valid = true;
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(binding.editTextTextEmailAddress2.getText()).matches()) {
+            binding.editTextTextEmailAddress2.setError("Enter valid email");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(String.valueOf(binding.editTextTextPassword2.getText()))) {
+            binding.editTextTextPassword2.setError("Enter password");
+            valid = false;
+        }
+        return valid;
     }
 
     @Override
@@ -63,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
                 } else {
                     Toast.makeText(this, "something went wrong", Toast.LENGTH_SHORT).show();
                     binding.button3.setEnabled(true);
+                    binding.button3.setText("Go To Feed");
                 }
                 break;
         }
@@ -84,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements RESTController.O
             case REQ_POST_LOG_IN_REQ:
                 Toast.makeText(this, "something went wrong", Toast.LENGTH_SHORT).show();
                 binding.button3.setEnabled(true);
+                binding.button3.setText("Go To Feed");
                 break;
         }
     }

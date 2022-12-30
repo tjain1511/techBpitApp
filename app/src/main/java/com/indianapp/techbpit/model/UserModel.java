@@ -43,10 +43,14 @@ public class UserModel implements Serializable {
 
     public String yearOfStudy;
 
+    @SerializedName("socialLinks")
+    @Expose
     public List<SocialPlatform> socialLinks;
-
+    @SerializedName("projects")
+    @Expose
     public List<ProjectResponse> projects;
-
+    @SerializedName("skills")
+    @Expose
     public List<String> skills;
 
     public String access_token;

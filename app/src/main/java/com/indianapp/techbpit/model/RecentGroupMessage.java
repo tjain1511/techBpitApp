@@ -2,7 +2,9 @@ package com.indianapp.techbpit.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RecentGroupMessage {
+import java.io.Serializable;
+
+public class RecentGroupMessage implements Serializable {
     @SerializedName("message")
     public String message;
 

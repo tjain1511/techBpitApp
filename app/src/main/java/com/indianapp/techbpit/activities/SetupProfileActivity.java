@@ -16,6 +16,8 @@ import com.indianapp.techbpit.databinding.ActivitySetupProfileBinding;
 import com.indianapp.techbpit.model.SetupProfileRequest;
 import com.indianapp.techbpit.model.SetupProfileRequestItem;
 import com.indianapp.techbpit.model.SocialPlatform;
+import com.indianapp.techbpit.model.UserModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -25,6 +27,8 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
     private static final String[] COUNTRIES = new String[]{
             "Android", "Android Development", "Node", "SQL", "Django", "React", "MongoDb"
     };
+    UserModel userModel;
+    String[] modes = {"- Select year of study -", "1st Year", "2nd Year", "3rd Year", "4th Year"};
     private ActivitySetupProfileBinding binding;
     private int yearOfStudy = 0;
 
@@ -33,6 +37,7 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
         super.onCreate(savedInstanceState);
         binding = ActivitySetupProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        getIntentData();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, COUNTRIES);
         binding.multiViewSkills.setAdapter(adapter);
@@ -63,6 +68,52 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
         binding.imageView8.setOnClickListener(v -> {
             onBackPressed();
         });
+
+        if (userModel != null) {
+            prefillData();
+        }
+    }
+
+    private void getIntentData() {
+        if (getIntent().getExtras().containsKey("profile_data")) {
+            userModel = (UserModel) getIntent().getExtras().getSerializable("profile_data");
+        }
+    }
+
+    private void prefillData() {
+        if (!TextUtils.isEmpty(userModel.imageUrl)) {
+            Picasso.get().load(userModel.imageUrl).into(binding.ivProfilePicture);
+        }
+        if (!TextUtils.isEmpty(userModel.username))
+            binding.edtFullName.setText(userModel.username);
+        if (!TextUtils.isEmpty(userModel.state))
+            binding.edtState.setText(userModel.state);
+        if (!TextUtils.isEmpty(userModel.city))
+            binding.edtCity.setText(userModel.city);
+        if (!TextUtils.isEmpty(userModel.about))
+            binding.edtAbout.setText(userModel.about);
+        binding.multiViewSkills.setText(getSkills());
+        if (!TextUtils.isEmpty(userModel.yearOfStudy))
+            binding.spnrSelectYear.setSelection(getYearOfStudy());
+    }
+
+    private String getSkills() {
+        String skills = "";
+        for (String skill : userModel.skills) {
+            skills += skill + ", ";
+        }
+        return skills;
+    }
+
+    private int getYearOfStudy() {
+        int idx = 0;
+        for (String year : modes) {
+            if (year.equalsIgnoreCase(userModel.yearOfStudy)) {
+                return idx;
+            }
+            idx++;
+        }
+        return idx;
     }
 
     @Override
@@ -75,9 +126,9 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
         }
     }
 
+
     private SetupProfileRequestItem createProfileData() {
         SetupProfileRequestItem setupProfileRequestItem = new SetupProfileRequestItem();
-//        setupProfileRequestItem.id = SharedPrefHelper.getUserModel(this)._id;
         if (!TextUtils.isEmpty(binding.edtFullName.getText())) {
             setupProfileRequestItem.username = String.valueOf(binding.edtFullName.getText());
         }
@@ -150,7 +201,6 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
     }
 
     private void setupSpinner() {
-        String[] modes = {"- Select year of study -", "1st Year", "2nd Year", "3rd Year", "4th Year"};
         ArrayAdapter ad
                 = new ArrayAdapter(
                 this,
@@ -197,6 +247,7 @@ public class SetupProfileActivity extends AppCompatActivity implements RESTContr
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> data, Response<?> response) {
         if (response.isSuccessful()) {
             binding.btnSetupProfile.setText("Updated Successfully");
+            onBackPressed();
         }
     }
 

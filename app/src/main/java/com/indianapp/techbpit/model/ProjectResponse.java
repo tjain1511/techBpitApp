@@ -1,6 +1,8 @@
 package com.indianapp.techbpit.model;
 
-public class ProjectResponse {
+import java.io.Serializable;
+
+public class ProjectResponse implements Serializable {
 
     public String title;
     public String image;

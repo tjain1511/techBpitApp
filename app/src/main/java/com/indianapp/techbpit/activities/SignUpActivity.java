@@ -2,6 +2,7 @@ package com.indianapp.techbpit.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,27 +28,44 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
 
     private void setOnClickListeners() {
         binding.button2.setOnClickListener(v -> {
-            binding.button2.setEnabled(false);
-            Toast.makeText(this, "Signing up....", Toast.LENGTH_SHORT).show();
-            signUpRequestModel = new SignUpRequestModel();
-            signUpRequestModel.email = String.valueOf(binding.editTextTextEmailAddress.getText());
-            signUpRequestModel.username = String.valueOf(binding.editTextTextPersonName.getText());
-            signUpRequestModel.password = String.valueOf(binding.editTextTextPassword.getText());
-            BaseData<SignUpRequestModel> baseData = new BaseData<>(signUpRequestModel);
-            try {
-                RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_POST_SIGN_UP_REQ, baseData, this);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (validate()) {
+                binding.button2.setEnabled(false);
+                binding.button2.setText("Signing up ...");
+                signUpRequestModel = new SignUpRequestModel();
+                signUpRequestModel.email = String.valueOf(binding.editTextTextEmailAddress.getText());
+                signUpRequestModel.username = String.valueOf(binding.editTextTextPersonName.getText());
+                signUpRequestModel.password = String.valueOf(binding.editTextTextPassword.getText());
+                BaseData<SignUpRequestModel> baseData = new BaseData<>(signUpRequestModel);
+                try {
+                    RESTController.getInstance(this).execute(RESTController.RESTCommands.REQ_POST_SIGN_UP_REQ, baseData, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         binding.ivBack.setOnClickListener(v -> onBackPressed());
     }
 
+    private boolean validate() {
+        boolean valid = true;
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(binding.editTextTextEmailAddress.getText()).matches()) {
+            binding.editTextTextEmailAddress.setError("Enter valid email");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(String.valueOf(binding.editTextTextPersonName.getText()))) {
+            binding.editTextTextPersonName.setError("Enter username");
+            valid = false;
+        }
+        if (TextUtils.isEmpty(String.valueOf(binding.editTextTextPassword.getText()))) {
+            binding.editTextTextPassword.setError("Enter password");
+            valid = false;
+        }
+        return valid;
+    }
+
     @Override
     public void onResponseReceived(RESTController.RESTCommands commands, BaseData<?> request, Response<?> response) {
         switch (commands) {
-            case REQ_POST_LOG_IN_REQ:
-                break;
             case REQ_POST_SIGN_UP_REQ:
                 if (response.isSuccessful()) {
                     Toast.makeText(this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
@@ -58,6 +76,7 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
                 } else {
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
                     binding.button2.setEnabled(true);
+                    binding.button2.setText("Proceed");
                 }
                 break;
         }
@@ -76,10 +95,10 @@ public class SignUpActivity extends AppCompatActivity implements RESTController.
     @Override
     public void onResponseFailed(RESTController.RESTCommands commands, BaseData<?> request, Throwable t) {
         switch (commands) {
-            case REQ_POST_LOG_IN_REQ:
             case REQ_POST_SIGN_UP_REQ:
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 binding.button2.setEnabled(true);
+                binding.button2.setText("Proceed");
                 break;
         }
     }

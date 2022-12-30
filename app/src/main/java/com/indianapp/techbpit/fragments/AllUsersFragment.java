@@ -52,6 +52,12 @@ public class AllUsersFragment extends Fragment implements RESTController.OnRespo
         super.onViewCreated(view, savedInstanceState);
         SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity())._id);
         socket = SocketClient.getSocket(getActivity());
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         try {
             RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_RECENT_USERS, new BaseData<>(SharedPrefHelper.getUserModel(getActivity())), this);
         } catch (Exception e) {

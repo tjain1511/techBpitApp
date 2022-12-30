@@ -7,13 +7,13 @@ import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.activities.LoginActivity;
 import com.indianapp.techbpit.model.AllGroupResponse;
 import com.indianapp.techbpit.model.GroupMessageRequest;
+import com.indianapp.techbpit.model.GroupResponse;
 import com.indianapp.techbpit.model.JoinGroupRequest;
 import com.indianapp.techbpit.model.MessageModel;
 import com.indianapp.techbpit.model.MessageRequest;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
 import com.indianapp.techbpit.model.PayLoad;
 import com.indianapp.techbpit.model.ProjectRequest;
-import com.indianapp.techbpit.model.ProjectResponse;
 import com.indianapp.techbpit.model.RefreshTokenRequest;
 import com.indianapp.techbpit.model.SetupProfileRequest;
 import com.indianapp.techbpit.model.SignUpRequestModel;
@@ -140,7 +140,11 @@ public class RESTController {
                     }
                     break;
                 case REQ_GET_USER_PROFILE:
-                    getUserProfile(command, listener);
+                    String userId;
+                    if (data.getBaseData() instanceof String) {
+                        userId = (String) data.getBaseData();
+                        getUserProfile(command, userId, listener);
+                    }
                     break;
                 case REQ_GET_SEARCH_USERS:
                     String query;
@@ -148,6 +152,22 @@ public class RESTController {
                         query = (String) data.getBaseData();
                         getSearchesUsers(command, query, listener);
                     }
+                    break;
+                case REQ_GET_GROUP_DATA:
+                    String groupId;
+                    if (data.getBaseData() instanceof String) {
+                        groupId = (String) data.getBaseData();
+                        getGroupData(command, groupId, listener);
+                    }
+                    break;
+                case REQ_PATCH_LEAVE_GROUP:
+                    String groupID;
+                    if (data.getBaseData() instanceof String) {
+                        groupID = (String) data.getBaseData();
+                        leaveGroup(command, groupID, listener);
+                    }
+                    break;
+                case REQ_GET_COMMUNITY_POSTS:
                     break;
                 default:
                     break;
@@ -248,13 +268,31 @@ public class RESTController {
                     }
                     break;
                 case REQ_GET_USER_PROFILE:
-                    getUserProfile(command, listener);
+                    String userId;
+                    if (data.getBaseData() instanceof String) {
+                        userId = (String) data.getBaseData();
+                        getUserProfile(command, userId, listener);
+                    }
                     break;
                 case REQ_GET_SEARCH_USERS:
                     String query;
                     if (data.getBaseData() instanceof String) {
                         query = (String) data.getBaseData();
                         getSearchesUsers(command, query, listener);
+                    }
+                    break;
+                case REQ_GET_GROUP_DATA:
+                    String groupId;
+                    if (data.getBaseData() instanceof String) {
+                        groupId = (String) data.getBaseData();
+                        getGroupData(command, groupId, listener);
+                    }
+                    break;
+                case REQ_PATCH_LEAVE_GROUP:
+                    String groupID;
+                    if (data.getBaseData() instanceof String) {
+                        groupID = (String) data.getBaseData();
+                        leaveGroup(command, groupID, listener);
                     }
                     break;
                 default:
@@ -497,6 +535,25 @@ public class RESTController {
         });
     }
 
+    private void getCommunityPost(RESTCommands command, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<List<SocialPostResponse>> call = service.getAllPosts(getAccessToken());
+        call.enqueue(new Callback<List<SocialPostResponse>>() {
+            @Override
+            public void onResponse(Call<List<SocialPostResponse>> call, Response<List<SocialPostResponse>> response) {
+                handleOnResponse(command, null, response, listener);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<SocialPostResponse>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
     private void updateUserProfile(RESTCommands command, SetupProfileRequest setupProfileRequest, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
         Call<ResponseBody> call = service.updateUserProfile(getAccessToken(), setupProfileRequest);
@@ -534,17 +591,53 @@ public class RESTController {
         });
     }
 
-    private void getUserProfile(RESTCommands command, OnResponseStatusListener listener) {
+    private void getUserProfile(RESTCommands command, String userId, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        Call<UserModel> call = service.getUserProfile(getAccessToken(), SharedPrefHelper.getUserModel(context)._id);
+        Call<UserModel> call = service.getUserProfile(getAccessToken(), userId);
         call.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                handleOnResponse(command, null, response, listener);
+                handleOnResponse(command, new BaseData<>(userId), response, listener);
             }
 
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
+    private void getGroupData(RESTCommands command, String groupId, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<GroupResponse> call = service.getGroupData(getAccessToken(), groupId);
+        call.enqueue(new Callback<GroupResponse>() {
+            @Override
+            public void onResponse(Call<GroupResponse> call, Response<GroupResponse> response) {
+                handleOnResponse(command, new BaseData<>(groupId), response, listener);
+            }
+
+            @Override
+            public void onFailure(Call<GroupResponse> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, null, t);
+                }
+            }
+        });
+    }
+
+    private void leaveGroup(RESTCommands command, String groupId, OnResponseStatusListener listener) {
+        EngineService service = EngineClient.getClient().create(EngineService.class);
+        Call<ResponseBody> call = service.leaveGroup(getAccessToken(), groupId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                handleOnResponse(command, new BaseData<>(groupId), response, listener);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 if (listener != null) {
                     listener.onResponseFailed(command, null, t);
                 }
@@ -576,7 +669,7 @@ public class RESTController {
             refreshToken();
         } else {
             if (listener != null) {
-                listener.onResponseReceived(command, null, response);
+                listener.onResponseReceived(command, data, response);
             }
         }
     }
@@ -641,8 +734,11 @@ public class RESTController {
         REQ_GET_ALL_POSTS,
         REQ_PATCH_UPDATE_USER_PROFILE,
         REQ_GET_USER_PROFILE,
+        REQ_GET_GROUP_DATA,
         REQ_POST_USER_PROJECTS,
-        REQ_GET_SEARCH_USERS
+        REQ_GET_SEARCH_USERS,
+        REQ_GET_COMMUNITY_POSTS,
+        REQ_PATCH_LEAVE_GROUP
     }
 
     public interface OnResponseStatusListener {

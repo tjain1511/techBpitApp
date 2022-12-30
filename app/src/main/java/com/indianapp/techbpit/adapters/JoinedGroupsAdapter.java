@@ -62,6 +62,9 @@ public class JoinedGroupsAdapter extends RecyclerView.Adapter<JoinedGroupsAdapte
             if (joinedGroups.get(position).lastMessage != null && joinedGroups.get(position).lastMessage.sender != null) {
                 if (!joinedGroups.get(position).lastMessage.sender._id.equalsIgnoreCase(SharedPrefHelper.getUserModel(ctx)._id)) {
                     recentMsg = joinedGroups.get(position).lastMessage.sender.username + ": ";
+                    binding.tvRecentMsg.setVisibility(View.VISIBLE);
+                }else{
+                    binding.tvRecentMsg.setVisibility(View.GONE);
                 }
                 recentMsg += joinedGroups.get(position).lastMessage.message;
                 binding.tvRecentMsg.setText(recentMsg);
