@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.indianapp.techbpit.BottomSheetImageSourceListener;
+import com.indianapp.techbpit.listeners.BottomSheetImageSourceListener;
 import com.indianapp.techbpit.activities.CreatePostActivity;
 import com.indianapp.techbpit.databinding.BottomSheetPostTypeBinding;
 

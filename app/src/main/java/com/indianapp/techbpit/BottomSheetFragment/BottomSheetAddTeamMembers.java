@@ -21,22 +21,20 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
-import com.indianapp.techbpit.MemberAddedListener;
-import com.indianapp.techbpit.MemberRemovedClickListener;
-import com.indianapp.techbpit.SharedPrefHelper;
-import com.indianapp.techbpit.SocketClient;
-import com.indianapp.techbpit.UserClickedListener;
 import com.indianapp.techbpit.adapters.AllUserAdapter;
 import com.indianapp.techbpit.adapters.TeamMembersAdapter;
 import com.indianapp.techbpit.databinding.BottomSheetAddTeamMembersBinding;
+import com.indianapp.techbpit.listeners.MemberAddedListener;
+import com.indianapp.techbpit.listeners.MemberRemovedClickListener;
+import com.indianapp.techbpit.listeners.UserClickedListener;
 import com.indianapp.techbpit.model.UserModel;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import io.socket.client.Socket;
 import retrofit2.Response;
 
 public class BottomSheetAddTeamMembers extends BottomSheetDialogFragment implements RESTController.OnResponseStatusListener, UserClickedListener, MemberRemovedClickListener {
@@ -52,7 +50,6 @@ public class BottomSheetAddTeamMembers extends BottomSheetDialogFragment impleme
     private AllUserAdapter allUserAdapter;
     private BottomSheetAddTeamMembersBinding binding;
     private SharedPreferences sharedPreferences;
-    private Socket socket;
     private MemberAddedListener listener;
 
     @Override
@@ -85,9 +82,6 @@ public class BottomSheetAddTeamMembers extends BottomSheetDialogFragment impleme
         LinearLayout layout = binding.getRoot();
         layout.setMinimumHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
         initAddedUserRecyclerView();
-
-        SocketClient.setUserId(SharedPrefHelper.getUserModel(getActivity())._id);
-        socket = SocketClient.getSocket(getActivity());
         try {
             RESTController.getInstance(getActivity()).execute(RESTController.RESTCommands.REQ_GET_ALL_USERS, new BaseData<>(SharedPrefHelper.getUserModel(getActivity())), this);
         } catch (Exception e) {

@@ -1,13 +1,13 @@
 package com.indianapp.techbpit.activities;
 
-import static com.indianapp.techbpit.DateTimeUtils.getAmPmFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getDayFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getFormattedDateSimple;
-import static com.indianapp.techbpit.DateTimeUtils.getFormattedTimeSimple;
-import static com.indianapp.techbpit.DateTimeUtils.getHourFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getMinuteFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getMonthFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getYearFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getAmPmFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getDayFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getFormattedDateSimple;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getFormattedTimeSimple;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getHourFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getMinuteFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getMonthFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getYearFromMillis;
 
 import android.Manifest;
 import android.content.ContentResolver;
@@ -39,9 +39,9 @@ import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetImageSource;
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetPostType;
-import com.indianapp.techbpit.BottomSheetImageSourceListener;
+import com.indianapp.techbpit.listeners.BottomSheetImageSourceListener;
 import com.indianapp.techbpit.R;
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityCreatePostBinding;
 import com.indianapp.techbpit.model.SocialPostRequest;
 import com.indianapp.techbpit.model.SocialPostRequestItem;

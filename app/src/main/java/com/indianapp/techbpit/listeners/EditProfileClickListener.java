@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.listeners;
 
 public interface EditProfileClickListener {
     void onEditProfileClicked();

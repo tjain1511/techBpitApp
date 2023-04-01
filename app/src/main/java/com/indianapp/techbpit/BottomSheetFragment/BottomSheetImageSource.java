@@ -10,8 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.indianapp.techbpit.BottomSheetImageSourceListener;
 import com.indianapp.techbpit.databinding.BottomSheetImageSourceBinding;
+import com.indianapp.techbpit.listeners.BottomSheetImageSourceListener;
 
 public class BottomSheetImageSource extends BottomSheetDialogFragment {
     private BottomSheetImageSourceBinding binding;

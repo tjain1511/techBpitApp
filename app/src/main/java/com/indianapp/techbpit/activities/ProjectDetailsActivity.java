@@ -6,7 +6,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivityProjectDetailsBinding;
 import com.indianapp.techbpit.model.ProjectResponse;
 import com.squareup.picasso.Picasso;

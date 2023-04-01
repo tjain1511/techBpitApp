@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.indianapp.techbpit.MemberRemovedClickListener;
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.listeners.MemberRemovedClickListener;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ItemTeamMemberBinding;
 import com.indianapp.techbpit.model.UserModel;
 import com.squareup.picasso.Picasso;

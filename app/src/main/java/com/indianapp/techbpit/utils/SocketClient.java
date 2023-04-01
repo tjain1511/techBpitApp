@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.utils;
 
 import android.content.Context;
 import android.util.Log;

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.JoinedGroupsAdapter;
 import com.indianapp.techbpit.databinding.FragmentAllJoinedGroupsBinding;
 import com.indianapp.techbpit.model.GroupResponse;

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.activities.ChatActivity;
 import com.indianapp.techbpit.databinding.ItemJoinedGroupsBinding;
 import com.indianapp.techbpit.model.GroupResponse;

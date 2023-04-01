@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -87,5 +87,18 @@ public class DateTimeUtils {
     public static String getFormattedTimeSimple(Long dateTime) {
         SimpleDateFormat newFormat = new SimpleDateFormat("hh:mm aa");
         return newFormat.format(new Date(dateTime));
+    }
+
+    public static String getSimpleDate(Long time) {
+        return new SimpleDateFormat("dd MMM").format(new Date(time.longValue()));
+    }
+
+    public static String getSimpleDate(String args) {
+        try {
+            return new SimpleDateFormat("dd MMM").format(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(args));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

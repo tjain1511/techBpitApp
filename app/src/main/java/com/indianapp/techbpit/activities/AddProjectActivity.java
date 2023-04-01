@@ -1,9 +1,9 @@
 package com.indianapp.techbpit.activities;
 
-import static com.indianapp.techbpit.DateTimeUtils.getDayFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getFormattedDate;
-import static com.indianapp.techbpit.DateTimeUtils.getMonthFromMillis;
-import static com.indianapp.techbpit.DateTimeUtils.getYearFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getDayFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getFormattedDate;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getMonthFromMillis;
+import static com.indianapp.techbpit.utils.DateTimeUtils.getYearFromMillis;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetAddTeamMembers;
-import com.indianapp.techbpit.MemberAddedListener;
-import com.indianapp.techbpit.MemberRemovedClickListener;
+import com.indianapp.techbpit.listeners.MemberAddedListener;
+import com.indianapp.techbpit.listeners.MemberRemovedClickListener;
 import com.indianapp.techbpit.R;
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.TeamMembersAdapter;
 import com.indianapp.techbpit.databinding.ActivityAddProjectBinding;
 import com.indianapp.techbpit.model.ProjectRequest;

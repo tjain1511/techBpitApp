@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
-import com.indianapp.techbpit.SharedPrefHelper;
-import com.indianapp.techbpit.SocketClient;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SocketClient;
 import com.indianapp.techbpit.adapters.AllUserAdapter;
 import com.indianapp.techbpit.databinding.FragmentAllUsersBinding;
 import com.indianapp.techbpit.model.UserModel;

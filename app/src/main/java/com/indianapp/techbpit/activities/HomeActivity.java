@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetPostType;
-import com.indianapp.techbpit.EditProfileClickListener;
+import com.indianapp.techbpit.listeners.EditProfileClickListener;
 import com.indianapp.techbpit.R;
 import com.indianapp.techbpit.databinding.ActivityHomeBinding;
 import com.indianapp.techbpit.fragments.CommunityFragment;

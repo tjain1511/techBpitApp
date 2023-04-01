@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.indianapp.techbpit.BottomSheetFragment.BottomSheetPostType;
-import com.indianapp.techbpit.DateTimeUtils;
+import com.indianapp.techbpit.utils.DateTimeUtils;
 import com.indianapp.techbpit.databinding.ItemCommunityPostBinding;
 import com.indianapp.techbpit.databinding.ItemEventPostBinding;
 import com.indianapp.techbpit.databinding.ItemResourcePostBinding;

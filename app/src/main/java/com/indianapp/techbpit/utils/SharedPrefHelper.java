@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.utils;
 
 import static android.content.Context.MODE_PRIVATE;
 

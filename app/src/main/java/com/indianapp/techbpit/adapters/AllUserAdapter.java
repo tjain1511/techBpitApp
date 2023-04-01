@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.indianapp.techbpit.SharedPrefHelper;
-import com.indianapp.techbpit.UserClickedListener;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
+import com.indianapp.techbpit.listeners.UserClickedListener;
 import com.indianapp.techbpit.activities.ChatActivity;
 import com.indianapp.techbpit.databinding.ItemAllUserBinding;
 import com.indianapp.techbpit.model.UserModel;

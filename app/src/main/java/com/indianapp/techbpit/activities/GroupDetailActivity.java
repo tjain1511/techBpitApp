@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
 import com.indianapp.techbpit.R;
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.adapters.AllUserAdapter;
 import com.indianapp.techbpit.databinding.ActivityGroupDetailBinding;
 import com.indianapp.techbpit.model.GroupResponse;

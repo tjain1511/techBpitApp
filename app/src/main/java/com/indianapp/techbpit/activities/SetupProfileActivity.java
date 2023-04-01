@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.indianapp.techbpit.ApiController.BaseData;
 import com.indianapp.techbpit.ApiController.RESTController;
-import com.indianapp.techbpit.SharedPrefHelper;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 import com.indianapp.techbpit.databinding.ActivitySetupProfileBinding;
 import com.indianapp.techbpit.model.SetupProfileRequest;
 import com.indianapp.techbpit.model.SetupProfileRequestItem;

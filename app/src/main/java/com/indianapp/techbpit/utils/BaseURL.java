@@ -1,4 +1,4 @@
-package com.indianapp.techbpit;
+package com.indianapp.techbpit.utils;
 
 public class BaseURL {
     public String baseUrl;

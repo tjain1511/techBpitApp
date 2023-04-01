@@ -3,7 +3,6 @@ package com.indianapp.techbpit.ApiController;
 import android.content.Context;
 import android.content.Intent;
 
-import com.indianapp.techbpit.SharedPrefHelper;
 import com.indianapp.techbpit.activities.LoginActivity;
 import com.indianapp.techbpit.model.AllGroupResponse;
 import com.indianapp.techbpit.model.GroupMessageRequest;
@@ -14,12 +13,14 @@ import com.indianapp.techbpit.model.MessageRequest;
 import com.indianapp.techbpit.model.OTPVerifyRequest;
 import com.indianapp.techbpit.model.PayLoad;
 import com.indianapp.techbpit.model.ProjectRequest;
+import com.indianapp.techbpit.model.ProjectResponse;
 import com.indianapp.techbpit.model.RefreshTokenRequest;
 import com.indianapp.techbpit.model.SetupProfileRequest;
 import com.indianapp.techbpit.model.SignUpRequestModel;
 import com.indianapp.techbpit.model.SocialPostRequest;
 import com.indianapp.techbpit.model.SocialPostResponse;
 import com.indianapp.techbpit.model.UserModel;
+import com.indianapp.techbpit.utils.SharedPrefHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,128 +51,45 @@ public class RESTController {
         return instance;
     }
 
+    public enum RESTCommands {
+        REQ_POST_SIGN_UP_REQ,
+        REQ_POST_LOG_IN_REQ,
+        REQ_POST_OTP_VERIFY,
+        REQ_GET_ALL_USERS,
+        REQ_GET_RECENT_USERS,
+        REQ_GET_MESSAGES,
+        REQ_GET_ALL_GROUPS,
+        REQ_POST_JOIN_GROUP,
+        REQ_GET_JOINED_GROUPS,
+        REQ_GET_GROUP_MESSAGES,
+        REQ_POST_POST,
+        REQ_GET_ALL_POSTS,
+        REQ_PATCH_UPDATE_USER_PROFILE,
+        REQ_GET_USER_PROFILE,
+        REQ_GET_GROUP_DATA,
+        REQ_POST_USER_PROJECTS,
+        REQ_GET_SEARCH_USERS,
+        REQ_GET_COMMUNITY_POSTS,
+        REQ_PATCH_LEAVE_GROUP,
+        REQ_GET_USER_PROJECTS,
+        REQ_PATCH_EDIT_PROJECT,
+        REQ_DELETE_USER_PROJECT,
+        REQ_GET_EXPLORE_PROJECTS,
+        REQ_GET_EXPLORE_USERS,
+        REQ_GET_GRP_POSTS,
+        REQ_GET_ALL_EVENTS,
+        REQ_GET_MANAGEABLE_GROUPS,
+        REQ_GET_SEARCHED_GROUPS,
+        REQ_GET_PROJECT_DETAILS
+    }
+
     public void clearPendingApis() {
         pendingApiCalls.clear();
     }
 
     public void execute(RESTCommands command, BaseData<?> data, OnResponseStatusListener listener) {
         if (!isRenewTokenCalled) {
-            switch (command) {
-                case REQ_POST_SIGN_UP_REQ:
-                    SignUpRequestModel signUpRequestModel;
-                    if (data.getBaseData() instanceof SignUpRequestModel) {
-                        signUpRequestModel = (SignUpRequestModel) data.getBaseData();
-                        postSignUpReq(command, signUpRequestModel, listener);
-                    }
-                    break;
-
-                case REQ_POST_LOG_IN_REQ:
-                    SignUpRequestModel loginRewModel;
-                    if (data.getBaseData() instanceof SignUpRequestModel) {
-                        signUpRequestModel = (SignUpRequestModel) data.getBaseData();
-                        postLoginReq(command, signUpRequestModel, listener);
-                    }
-                    break;
-                case REQ_POST_OTP_VERIFY:
-                    OTPVerifyRequest otpVerifyRequest;
-                    if (data.getBaseData() instanceof OTPVerifyRequest) {
-                        otpVerifyRequest = (OTPVerifyRequest) data.getBaseData();
-                        postOTPVerify(command, otpVerifyRequest, listener);
-                    }
-                    break;
-                case REQ_GET_ALL_USERS:
-                    getAllUsers(command, listener);
-                    break;
-                case REQ_GET_RECENT_USERS:
-                    getRecentUser(command, listener);
-                    break;
-                case REQ_GET_MESSAGES:
-                    MessageRequest messageRequest;
-                    if (data.getBaseData() instanceof MessageRequest) {
-                        messageRequest = (MessageRequest) data.getBaseData();
-                        getDirectMessages(command, messageRequest, listener);
-                    }
-                    break;
-                case REQ_GET_ALL_GROUPS:
-                    getAllGroups(command, listener);
-                    break;
-                case REQ_POST_JOIN_GROUP:
-                    JoinGroupRequest joinGroupRequest;
-                    if (data.getBaseData() instanceof JoinGroupRequest) {
-                        joinGroupRequest = (JoinGroupRequest) data.getBaseData();
-                        postJoinGroup(command, joinGroupRequest, listener);
-                    }
-                case REQ_GET_JOINED_GROUPS:
-                    UserModel getJoinedReq;
-                    if (data.getBaseData() instanceof UserModel) {
-                        getJoinedReq = (UserModel) data.getBaseData();
-                        getJoinedGroups(command, getJoinedReq, listener);
-                    }
-                case REQ_GET_GROUP_MESSAGES:
-                    GroupMessageRequest groupMessageRequest;
-                    if (data.getBaseData() instanceof GroupMessageRequest) {
-                        groupMessageRequest = (GroupMessageRequest) data.getBaseData();
-                        getGroupMessages(command, groupMessageRequest, listener);
-                    }
-
-                    break;
-                case REQ_POST_POST:
-                    SocialPostRequest socialPostRequest;
-                    if (data.getBaseData() instanceof SocialPostRequest) {
-                        socialPostRequest = (SocialPostRequest) data.getBaseData();
-                        postSocialPost(command, socialPostRequest, listener);
-                    }
-                    break;
-                case REQ_GET_ALL_POSTS:
-                    getAllPosts(command, listener);
-                    break;
-                case REQ_PATCH_UPDATE_USER_PROFILE:
-                    SetupProfileRequest setupProfileRequest;
-                    if (data.getBaseData() instanceof SetupProfileRequest) {
-                        setupProfileRequest = (SetupProfileRequest) data.getBaseData();
-                        updateUserProfile(command, setupProfileRequest, listener);
-                    }
-                    break;
-                case REQ_POST_USER_PROJECTS:
-                    ProjectRequest projectRequest;
-                    if (data.getBaseData() instanceof ProjectRequest) {
-                        projectRequest = (ProjectRequest) data.getBaseData();
-                        postUserProjects(command, projectRequest, listener);
-                    }
-                    break;
-                case REQ_GET_USER_PROFILE:
-                    String userId;
-                    if (data.getBaseData() instanceof String) {
-                        userId = (String) data.getBaseData();
-                        getUserProfile(command, userId, listener);
-                    }
-                    break;
-                case REQ_GET_SEARCH_USERS:
-                    String query;
-                    if (data.getBaseData() instanceof String) {
-                        query = (String) data.getBaseData();
-                        getSearchesUsers(command, query, listener);
-                    }
-                    break;
-                case REQ_GET_GROUP_DATA:
-                    String groupId;
-                    if (data.getBaseData() instanceof String) {
-                        groupId = (String) data.getBaseData();
-                        getGroupData(command, groupId, listener);
-                    }
-                    break;
-                case REQ_PATCH_LEAVE_GROUP:
-                    String groupID;
-                    if (data.getBaseData() instanceof String) {
-                        groupID = (String) data.getBaseData();
-                        leaveGroup(command, groupID, listener);
-                    }
-                    break;
-                case REQ_GET_COMMUNITY_POSTS:
-                    break;
-                default:
-                    break;
-            }
+            resolveRESTCommand(command, data, listener);
         } else {
             pendingApiCalls.add(new PayLoad(command, data, listener));
         }
@@ -181,125 +99,141 @@ public class RESTController {
         RESTCommands command = payLoad.command;
         BaseData<?> data = (BaseData<?>) payLoad.data;
         OnResponseStatusListener listener = (OnResponseStatusListener) payLoad.listener;
-        if (!isRenewTokenCalled) {
-            switch (payLoad.command) {
-                case REQ_POST_SIGN_UP_REQ:
-                    SignUpRequestModel signUpRequestModel;
-                    if (data.getBaseData() instanceof SignUpRequestModel) {
-                        signUpRequestModel = (SignUpRequestModel) data.getBaseData();
-                        postSignUpReq(command, signUpRequestModel, listener);
-                    }
-                    break;
+        execute(command, data, listener);
+    }
 
-                case REQ_POST_LOG_IN_REQ:
-                    SignUpRequestModel loginRewModel;
-                    if (data.getBaseData() instanceof SignUpRequestModel) {
-                        signUpRequestModel = (SignUpRequestModel) data.getBaseData();
-                        postLoginReq(command, signUpRequestModel, listener);
-                    }
-                    break;
-                case REQ_POST_OTP_VERIFY:
-                    OTPVerifyRequest otpVerifyRequest;
-                    if (data.getBaseData() instanceof OTPVerifyRequest) {
-                        otpVerifyRequest = (OTPVerifyRequest) data.getBaseData();
-                        postOTPVerify(command, otpVerifyRequest, listener);
-                    }
-                    break;
-                case REQ_GET_ALL_USERS:
-                    getAllUsers(command, listener);
-                    break;
-                case REQ_GET_RECENT_USERS:
-                    getRecentUser(command, listener);
-                    break;
-                case REQ_GET_MESSAGES:
-                    MessageRequest messageRequest;
-                    if (data.getBaseData() instanceof MessageRequest) {
-                        messageRequest = (MessageRequest) data.getBaseData();
-                        getDirectMessages(command, messageRequest, listener);
-                    }
-                    break;
-                case REQ_GET_ALL_GROUPS:
-                    getAllGroups(command, listener);
-                    break;
-                case REQ_POST_JOIN_GROUP:
-                    JoinGroupRequest joinGroupRequest;
-                    if (data.getBaseData() instanceof JoinGroupRequest) {
-                        joinGroupRequest = (JoinGroupRequest) data.getBaseData();
-                        postJoinGroup(command, joinGroupRequest, listener);
-                    }
-                    break;
-                case REQ_GET_JOINED_GROUPS:
-                    UserModel getJoinedReq;
-                    if (data.getBaseData() instanceof UserModel) {
-                        getJoinedReq = (UserModel) data.getBaseData();
-                        getJoinedGroups(command, getJoinedReq, listener);
-                    }
-                    break;
-                case REQ_GET_GROUP_MESSAGES:
-                    GroupMessageRequest groupMessageRequest;
-                    if (data.getBaseData() instanceof GroupMessageRequest) {
-                        groupMessageRequest = (GroupMessageRequest) data.getBaseData();
-                        getGroupMessages(command, groupMessageRequest, listener);
-                    }
+    public void resolveRESTCommand(RESTCommands command, BaseData<?> data, OnResponseStatusListener listener) {
+        switch (command) {
+            case REQ_POST_SIGN_UP_REQ:
+                if (data.getBaseData() instanceof SignUpRequestModel) {
+                    postSignUpReq(command, (SignUpRequestModel) data.getBaseData(), listener);
+                }
+                break;
 
-                    break;
-                case REQ_POST_POST:
-                    SocialPostRequest socialPostRequest;
-                    if (data.getBaseData() instanceof SocialPostRequest) {
-                        socialPostRequest = (SocialPostRequest) data.getBaseData();
-                        postSocialPost(command, socialPostRequest, listener);
-                    }
-                    break;
-                case REQ_GET_ALL_POSTS:
-                    getAllPosts(command, listener);
-                    break;
-                case REQ_PATCH_UPDATE_USER_PROFILE:
-                    SetupProfileRequest setupProfileRequest;
-                    if (data.getBaseData() instanceof SetupProfileRequest) {
-                        setupProfileRequest = (SetupProfileRequest) data.getBaseData();
-                        updateUserProfile(command, setupProfileRequest, listener);
-                    }
-                    break;
-                case REQ_POST_USER_PROJECTS:
-                    ProjectRequest projectRequest;
-                    if (data.getBaseData() instanceof ProjectRequest) {
-                        projectRequest = (ProjectRequest) data.getBaseData();
-                        postUserProjects(command, projectRequest, listener);
-                    }
-                    break;
-                case REQ_GET_USER_PROFILE:
-                    String userId;
-                    if (data.getBaseData() instanceof String) {
-                        userId = (String) data.getBaseData();
-                        getUserProfile(command, userId, listener);
-                    }
-                    break;
-                case REQ_GET_SEARCH_USERS:
-                    String query;
-                    if (data.getBaseData() instanceof String) {
-                        query = (String) data.getBaseData();
-                        getSearchesUsers(command, query, listener);
-                    }
-                    break;
-                case REQ_GET_GROUP_DATA:
-                    String groupId;
-                    if (data.getBaseData() instanceof String) {
-                        groupId = (String) data.getBaseData();
-                        getGroupData(command, groupId, listener);
-                    }
-                    break;
-                case REQ_PATCH_LEAVE_GROUP:
-                    String groupID;
-                    if (data.getBaseData() instanceof String) {
-                        groupID = (String) data.getBaseData();
-                        leaveGroup(command, groupID, listener);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            pendingApiCalls.add(new PayLoad(command, data, listener));
+            case REQ_POST_LOG_IN_REQ:
+                if (data.getBaseData() instanceof SignUpRequestModel) {
+                    postLoginReq(command, (SignUpRequestModel) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_POST_OTP_VERIFY:
+                if (data.getBaseData() instanceof OTPVerifyRequest) {
+                    postOTPVerify(command, (OTPVerifyRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_ALL_USERS:
+                getAllUsers(command, listener);
+                break;
+            case REQ_GET_RECENT_USERS:
+                getRecentUser(command, listener);
+                break;
+            case REQ_GET_MESSAGES:
+                if (data.getBaseData() instanceof MessageRequest) {
+                    getDirectMessages(command, (MessageRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_ALL_GROUPS:
+                getAllGroups(command, listener);
+                break;
+            case REQ_POST_JOIN_GROUP:
+                if (data.getBaseData() instanceof JoinGroupRequest) {
+                    postJoinGroup(command, (JoinGroupRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_JOINED_GROUPS:
+                if (data.getBaseData() instanceof UserModel) {
+                    getJoinedGroups(command, (UserModel) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_GROUP_MESSAGES:
+                if (data.getBaseData() instanceof GroupMessageRequest) {
+                    getGroupMessages(command, (GroupMessageRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_POST_POST:
+                if (data.getBaseData() instanceof SocialPostRequest) {
+                    postSocialPost(command, (SocialPostRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_ALL_POSTS:
+                getAllPosts(command, listener);
+                break;
+            case REQ_PATCH_UPDATE_USER_PROFILE:
+                if (data.getBaseData() instanceof SetupProfileRequest) {
+                    updateUserProfile(command, (SetupProfileRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_POST_USER_PROJECTS:
+                if (data.getBaseData() instanceof ProjectRequest) {
+                    postUserProjects(command, (ProjectRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_USER_PROFILE:
+                if (data.getBaseData() instanceof String) {
+                    getUserProfile(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_SEARCH_USERS:
+                if (data.getBaseData() instanceof String) {
+                    getSearchesUsers(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_GROUP_DATA:
+                if (data.getBaseData() instanceof String) {
+                    getGroupData(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_PATCH_LEAVE_GROUP:
+                if (data.getBaseData() instanceof String) {
+                    leaveGroup(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_COMMUNITY_POSTS:
+                getJoinedCommunitiesPosts(command, listener);
+                break;
+            case REQ_GET_USER_PROJECTS:
+                getUserProjects(command, (String) data.getBaseData(), listener);
+                break;
+            case REQ_PATCH_EDIT_PROJECT:
+                if (data.getBaseData() instanceof ProjectRequest) {
+                    editUserProject(command, (ProjectRequest) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_DELETE_USER_PROJECT:
+                if (data.getBaseData() instanceof String) {
+                    deleteUserProject(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_EXPLORE_PROJECTS:
+                getExploreProjects(command, listener);
+                break;
+            case REQ_GET_EXPLORE_USERS:
+                getExploreUsers(command, listener);
+                break;
+            case REQ_GET_GRP_POSTS:
+                if (data.getBaseData() instanceof String) {
+                    getGroupPosts(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_ALL_EVENTS:
+                getAllEvents(command, listener);
+                break;
+            case REQ_GET_MANAGEABLE_GROUPS:
+                if (data.getBaseData() instanceof String) {
+                    getManageableGroups(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_SEARCHED_GROUPS:
+                if (data.getBaseData() instanceof String) {
+                    getSearchedGroups(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            case REQ_GET_PROJECT_DETAILS:
+                if (data.getBaseData() instanceof String) {
+                    getProjectDetails(command, (String) data.getBaseData(), listener);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -383,9 +317,7 @@ public class RESTController {
 
     private void getRecentUser(RESTCommands command, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("userId", SharedPrefHelper.getUserModel(context)._id);
-        Call<List<UserModel>> call = service.getRecentUsers(getAccessToken(), hashMap);
+        Call<List<UserModel>> call = service.getRecentUsers(getAccessToken());
         call.enqueue(new Callback<List<UserModel>>() {
             @Override
             public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
@@ -404,7 +336,7 @@ public class RESTController {
 
     private void getDirectMessages(RESTCommands command, MessageRequest messageRequest, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        Call<List<MessageModel>> call = service.getDirectMessages(getAccessToken(), messageRequest);
+        Call<List<MessageModel>> call = service.getDirectMessages(getAccessToken(), messageRequest.receiver);
         call.enqueue(new Callback<List<MessageModel>>() {
             @Override
             public void onResponse(Call<List<MessageModel>> call, Response<List<MessageModel>> response) {
@@ -425,7 +357,7 @@ public class RESTController {
         EngineService service = EngineClient.getClient().create(EngineService.class);
         JoinGroupRequest joinGroupRequest = new JoinGroupRequest();
         joinGroupRequest.userId = SharedPrefHelper.getUserModel(context)._id;
-        Call<List<AllGroupResponse>> call = service.getAllGroups(getAccessToken(), joinGroupRequest);
+        Call<List<AllGroupResponse>> call = service.getAllGroups(getAccessToken());
         call.enqueue(new Callback<List<AllGroupResponse>>() {
             @Override
             public void onResponse(Call<List<AllGroupResponse>> call, Response<List<AllGroupResponse>> response) {
@@ -462,7 +394,7 @@ public class RESTController {
 
     private void getJoinedGroups(RESTCommands command, UserModel getJoinedReq, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        Call<UserModel> call = service.getJoinedGroups(getAccessToken(), getJoinedReq);
+        Call<UserModel> call = service.getJoinedGroups(getAccessToken());
         call.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
@@ -481,7 +413,7 @@ public class RESTController {
 
     private void getGroupMessages(RESTCommands command, GroupMessageRequest groupId, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        Call<List<MessageModel>> call = service.getGrpMessages(getAccessToken(), groupId);
+        Call<List<MessageModel>> call = service.getGrpMessages(getAccessToken(), groupId.groupId);
         call.enqueue(new Callback<List<MessageModel>>() {
             @Override
             public void onResponse(Call<List<MessageModel>> call, Response<List<MessageModel>> response) {
@@ -647,7 +579,7 @@ public class RESTController {
 
     private void getSearchesUsers(RESTCommands command, String query, OnResponseStatusListener listener) {
         EngineService service = EngineClient.getClient().create(EngineService.class);
-        Call<List<UserModel>> call = service.getSearchedUsers(query);
+        Call<List<UserModel>> call = service.getSearchedUsers(getAccessToken(), query);
         call.enqueue(new Callback<List<UserModel>>() {
             @Override
             public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
@@ -662,6 +594,170 @@ public class RESTController {
             }
         });
     }
+
+    private void getAllEvents(final RESTCommands command, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getAllEvents(getAccessToken()).enqueue(new Callback<List<SocialPostResponse>>() {
+            public void onResponse(Call<List<SocialPostResponse>> call, Response<List<SocialPostResponse>> response) {
+                handleOnResponse(command, new BaseData(null), response, listener);
+            }
+
+            public void onFailure(Call<List<SocialPostResponse>> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getProjectDetails(final RESTCommands command, final String projectId, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getProjectDetails(getAccessToken(), projectId).enqueue(new Callback<ProjectResponse>() {
+            public void onResponse(Call<ProjectResponse> call, Response<ProjectResponse> response) {
+                handleOnResponse(command, new BaseData(projectId), response, listener);
+            }
+
+            public void onFailure(Call<ProjectResponse> call, Throwable t) {
+                if (listener != null) {
+                    listener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void editUserProject(final RESTCommands command, ProjectRequest projectRequest, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).editProjects(getAccessToken(), projectRequest.id, projectRequest).enqueue(new Callback<ResponseBody>() {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                handleOnResponse(command, (BaseData<?>) null, response, listener);
+            }
+
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void deleteUserProject(final RESTCommands command, String projectId, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).deleteProjects(getAccessToken(), projectId).enqueue(new Callback<ResponseBody>() {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                handleOnResponse(command, (BaseData<?>) null, response, listener);
+            }
+
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getUserProjects(final RESTCommands command, String userId, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getProjects(getAccessToken(), userId).enqueue(new Callback<List<ProjectResponse>>() {
+            public void onResponse(Call<List<ProjectResponse>> call, Response<List<ProjectResponse>> response) {
+                handleOnResponse(command, (BaseData<?>) null, response, listener);
+            }
+
+            public void onFailure(Call<List<ProjectResponse>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getSearchedGroups(final RESTCommands command, final String query, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getSearchedGroups(getAccessToken(), query).enqueue(new Callback<List<AllGroupResponse>>() {
+            public void onResponse(Call<List<AllGroupResponse>> call, Response<List<AllGroupResponse>> response) {
+                handleOnResponse(command, new BaseData(query), response, listener);
+            }
+
+            public void onFailure(Call<List<AllGroupResponse>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getGroupPosts(final RESTCommands command, final String groupId, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getGroupPosts(getAccessToken(), groupId).enqueue(new Callback<List<SocialPostResponse>>() {
+            public void onResponse(Call<List<SocialPostResponse>> call, Response<List<SocialPostResponse>> response) {
+                handleOnResponse(command, new BaseData(groupId), response, listener);
+            }
+
+            public void onFailure(Call<List<SocialPostResponse>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getJoinedCommunitiesPosts(final RESTCommands command, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getJoinedCommunitiesPosts(getAccessToken()).enqueue(new Callback<List<SocialPostResponse>>() {
+            public void onResponse(Call<List<SocialPostResponse>> call, Response<List<SocialPostResponse>> response) {
+                handleOnResponse(command, (BaseData<?>) null, response, listener);
+            }
+
+            public void onFailure(Call<List<SocialPostResponse>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getManageableGroups(final RESTCommands command, final String userId, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getManageableGroups(getAccessToken(), userId).enqueue(new Callback<List<AllGroupResponse>>() {
+            public void onResponse(Call<List<AllGroupResponse>> call, Response<List<AllGroupResponse>> response) {
+                handleOnResponse(command, new BaseData(userId), response, listener);
+            }
+
+            public void onFailure(Call<List<AllGroupResponse>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, new BaseData(userId), t);
+                }
+            }
+        });
+    }
+
+    private void getExploreProjects(final RESTCommands command, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getExploreProjects(getAccessToken(), "10").enqueue(new Callback<List<ProjectResponse>>() {
+            public void onResponse(Call<List<ProjectResponse>> call, Response<List<ProjectResponse>> response) {
+                handleOnResponse(command, (BaseData<?>) null, response, listener);
+            }
+
+            public void onFailure(Call<List<ProjectResponse>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
+    private void getExploreUsers(final RESTCommands command, final OnResponseStatusListener listener) {
+        ((EngineService) EngineClient.getClient().create(EngineService.class)).getExploreUsers(getAccessToken(), "10").enqueue(new Callback<List<UserModel>>() {
+            public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+                handleOnResponse(command, (BaseData<?>) null, response, listener);
+            }
+
+            public void onFailure(Call<List<UserModel>> call, Throwable t) {
+                OnResponseStatusListener onResponseStatusListener = listener;
+                if (onResponseStatusListener != null) {
+                    onResponseStatusListener.onResponseFailed(command, (BaseData<?>) null, t);
+                }
+            }
+        });
+    }
+
 
     private void handleOnResponse(RESTCommands command, BaseData<?> data, Response<?> response, OnResponseStatusListener listener) {
         if (response.code() == 401) {
@@ -717,28 +813,6 @@ public class RESTController {
 
     private String getRefreshToken() {
         return SharedPrefHelper.getUserModel(context).refresh_token;
-    }
-
-    public enum RESTCommands {
-        REQ_POST_SIGN_UP_REQ,
-        REQ_POST_LOG_IN_REQ,
-        REQ_POST_OTP_VERIFY,
-        REQ_GET_ALL_USERS,
-        REQ_GET_RECENT_USERS,
-        REQ_GET_MESSAGES,
-        REQ_GET_ALL_GROUPS,
-        REQ_POST_JOIN_GROUP,
-        REQ_GET_JOINED_GROUPS,
-        REQ_GET_GROUP_MESSAGES,
-        REQ_POST_POST,
-        REQ_GET_ALL_POSTS,
-        REQ_PATCH_UPDATE_USER_PROFILE,
-        REQ_GET_USER_PROFILE,
-        REQ_GET_GROUP_DATA,
-        REQ_POST_USER_PROJECTS,
-        REQ_GET_SEARCH_USERS,
-        REQ_GET_COMMUNITY_POSTS,
-        REQ_PATCH_LEAVE_GROUP
     }
 
     public interface OnResponseStatusListener {
