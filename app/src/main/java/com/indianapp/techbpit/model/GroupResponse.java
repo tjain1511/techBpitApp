@@ -5,12 +5,12 @@ import java.util.List;
 
 public class GroupResponse implements Serializable {
     public String _id;
+    public boolean canEdit;
+    public String description;
     public String groupName;
     public String image;
-    public String description;
     public boolean isJoined;
     public RecentGroupMessage lastMessage;
-    public List<UserModel> usersJoined;
     public List<UserModel> moderators;
-    public boolean canEdit;
+    public List<UserModel> usersJoined;
 }

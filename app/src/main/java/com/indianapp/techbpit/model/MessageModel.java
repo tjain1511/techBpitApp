@@ -3,23 +3,22 @@ package com.indianapp.techbpit.model;
 import com.google.gson.annotations.SerializedName;
 
 public class MessageModel {
-    @SerializedName("message")
-    public String message;
+    public String date;
+    @SerializedName("_id")
 
-    @SerializedName("timestamp")
-    public String timestamp;
-
-    @SerializedName("sender")
-    public String sender;
-
-    @SerializedName("receiver")
-    public String receiver;
-
+    public String id;
     @SerializedName("imageUrl")
     public String imageUrl;
-
-    //default true to save reduntant fields
+    public boolean isError = false;
+    @SerializedName("isRead")
+    public boolean isRead;
     public boolean isSent = true;
-
-    public String date;
+    @SerializedName("message")
+    public String message;
+    @SerializedName("receiver")
+    public String receiver;
+    @SerializedName("sender")
+    public String sender;
+    @SerializedName("timestamp")
+    public String timestamp;
 }

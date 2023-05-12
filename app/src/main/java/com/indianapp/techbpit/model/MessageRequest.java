@@ -6,11 +6,10 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class MessageRequest implements Serializable {
-    @SerializedName("sender")
-    @Expose
-    public String sender;
-
     @SerializedName("receiver")
     @Expose
     public String receiver;
+    @SerializedName("sender")
+    @Expose
+    public String sender;
 }

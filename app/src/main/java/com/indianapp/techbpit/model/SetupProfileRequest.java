@@ -1,6 +1,8 @@
 package com.indianapp.techbpit.model;
 
 public class SetupProfileRequest {
-    public SetupProfileRequestItem item;
+
+    /* renamed from: id */
     public String id;
+    public SetupProfileRequestItem item;
 }

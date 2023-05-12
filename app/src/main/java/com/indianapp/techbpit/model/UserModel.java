@@ -11,50 +11,43 @@ public class UserModel implements Serializable {
     @Expose
     public String _id;
 
+    @SerializedName("about")
+    @Expose
+    public String about;
+    @SerializedName("access_token")
+    @Expose
+    public String access_token;
+    @SerializedName("city")
+    @Expose
+    public String city;
     @SerializedName("email")
     @Expose
     public String email;
-
-    @SerializedName("username")
-    @Expose
-    public String username;
-
-    @SerializedName("isActive")
-    @Expose
-    public boolean isActive;
-
     @SerializedName("groupsJoined")
     @Expose
     public List<GroupResponse> groupsJoined;
-
     @SerializedName("image")
     @Expose
     public String imageUrl;
-
+    @SerializedName("isActive")
+    @Expose
+    public boolean isActive;
     @SerializedName("lastMessage")
     @Expose
     public RecentMessage lastMessage;
-
-    public String about;
-
-    public String state;
-
-    public String city;
-
-    public String yearOfStudy;
-
-    @SerializedName("socialLinks")
-    @Expose
-    public List<SocialPlatform> socialLinks;
     @SerializedName("projects")
     @Expose
     public List<ProjectResponse> projects;
+    public String refresh_token;
     @SerializedName("skills")
     @Expose
     public List<String> skills;
-
-    public String access_token;
-
-    public String refresh_token;
-
+    @SerializedName("socialLinks")
+    @Expose
+    public List<SocialPlatform> socialLinks;
+    public String state;
+    @SerializedName("username")
+    @Expose
+    public String username;
+    public String yearOfStudy;
 }
